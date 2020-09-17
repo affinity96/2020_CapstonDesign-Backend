@@ -10,5 +10,5 @@
 
 참고 사이트
 
-https://onepinetwopine.tistory.com/234    // https://onepinetwopine.tistory.com/234
+https://onepinetwopine.tistory.com/234    // android - node.js 간단하게 데이터 통신하기 //Volley활용
 https://simsi6.tistory.com/29             // Node.js 프로젝트 시작하기 (2/2) - 프로그램 작성 및 실행
