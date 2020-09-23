@@ -63,3 +63,21 @@ app.use(function(req, res, next) {
 app.listen(PORT, () => {
   console.log('Server is running at:',PORT);
 });
+
+// mysql 연동 테스트
+const mysql = require('mysql');
+const connection = mysql.createConnection({
+  host : '101.101.208.180',
+  user : 'root',
+  password : 'ghazlvk',
+  database : 'homekippa'
+});
+
+connection.connect();
+
+connection.query('SELECT * from Users', (error, rows, fields) => {
+  if (error) throw error;
+  console.log('User info is: ', rows);
+});
+
+connection.end();
