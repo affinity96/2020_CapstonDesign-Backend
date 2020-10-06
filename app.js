@@ -1,4 +1,8 @@
 const express = require('express');
+// db test
+const mysql = require('mysql');
+const dbconfig = require('./config/database.js');
+const connection = mysql.createConnection(dbconfig);
 
 const app = express();
 const PORT = process.env.PORT = 3000;
@@ -58,6 +62,14 @@ app.use(function(req, res, next) {
   app.get('/users', (req, res) => {
      console.log('who get in here/users');
      res.json(users)
+  });
+
+  app.get('/db', (req,res) => {
+    connection.query('SELECT * from Users', (error, rows) => {
+      if (error) throw error;
+      console.log('User info is: ', rows);
+      res.send(rows);
+    });
   });
 
 app.listen(PORT, () => {
