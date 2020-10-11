@@ -19,6 +19,7 @@
   "homepage": "https://github.com/HOMEKIPPA/HOMEKIPPA_BACKEND#readme",
   "dependencies": {
     "express": "^4.17.1",
+    "firebase-admin": "^9.2.0",
     "mysql": "^2.18.1"
   }
 }

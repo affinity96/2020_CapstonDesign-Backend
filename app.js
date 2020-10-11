@@ -1,4 +1,6 @@
 const express = require('express');
+var admin = require('firebase-admin');
+var serviceAccount = require("path/to/serviceAccountKey.json");
 // db test
 const mysql = require('mysql');
 const dbconfig = require('./config/database.js');
@@ -11,6 +13,11 @@ const bodyParser= require('body-parser');
 app.use(express.static('public'));
 app.use(bodyParser.urlencoded({extended:false}));
 app.use(bodyParser.json());
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+  databaseURL: "https://homekippa-c2f26.firebaseio.com"
+});
 
 let users = [
   {
@@ -64,13 +71,36 @@ app.use(function(req, res, next) {
      res.json(users)
   });
 
-  app.get('/db', (req,res) => {
-    connection.query('SELECT * from Users', (error, rows) => {
-      if (error) throw error;
-      console.log('User info is: ', rows);
-      res.send(rows);
-    });
-  });
+  // app.get('/db', (req,res) => {
+  //   connection.query('SELECT * from Users', (error, rows) => {
+  //     if (error) throw error;
+  //     console.log('User info is: ', rows);
+  //     res.send(rows);
+  //   });
+  // });
+
+  app.post('/db', (req, res) => {
+    var age = req.body.age;
+    var name = req.body.name;
+    var idToken = req.body.idToken;
+    var uid;
+
+    admin.auth().verifyIdToken(idToken)
+      .then(function(decodedToken) {
+        uid = decodedToken.uid;
+      }).catch(function(error) {
+        console.log(error);
+      });
+
+    var sql = 'INSERT INTO Users (age, name, uid) VALUES (?, ?, ?)';
+    connection.query(sql, [age, name, uid], function(err, result, field) {
+      if(err){
+        console.log(err);
+        res.status(500).send('Internal Server Error');
+      }
+      res.redirect('/'+ result.insertId);
+    })
+  })
 
 app.listen(PORT, () => {
   console.log('Server is running at:',PORT);
