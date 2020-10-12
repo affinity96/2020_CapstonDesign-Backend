@@ -1,7 +1,7 @@
 const express = require('express');
 var admin = require('firebase-admin');
 var serviceAccount = require("./path/to/homekippa-c2f26-firebase-adminsdk-ffxqb-629c2e2eec.json");
-// db test
+
 const mysql = require('mysql');
 const dbconfig = require('./config/database.js');
 const connection = mysql.createConnection(dbconfig);
@@ -13,8 +13,6 @@ const bodyParser = require('body-parser');
 app.use(express.static('public'));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-
-const hostname = "192.168.188.1";
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
@@ -64,7 +62,6 @@ app.post('/user/add', (req, res) => {
   }
 });
 
-app.listen(PORT, hostname, () => {
+app.listen(PORT, () => {
   console.log('Server is running at:', PORT);
 });
-
