@@ -43,7 +43,7 @@ app.post('/user/add', (req, res) => {
         console.log(error);
       })
 
-    var sql = 'INSERT INTO Users (age, name, uid) VALUES (?, ?, ?)';
+    var sql = 'INSERT INTO User (age, name, id) VALUES (?, ?, ?)';
     await connection.query(sql, [age, name, uid], (err, result) => {
       var resultCode = 404;
       var message = '에러 발생';
