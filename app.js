@@ -44,8 +44,7 @@ app.post('/user/add', (req, res) => {
   var id = req.body.userId;
   var phone = "+82" + req.body.userPhone;
   var email = req.body.userEmail;
-  var pw = req.body.userPW;
-
+  var birth = req.body.userBirth;
   var resultCode = 404;
   var message = '에러 발생';
 
@@ -58,28 +57,16 @@ app.post('/user/add', (req, res) => {
   });
 
   async function insertData() {
-    admin.auth().createUser({
-      uid: id,
-      email,
-      phoneNumber: phone,
-      password: pw,
-    })
-      .then(function(userRecord){
-        console.log('User 생성 성공:', userRecord.uid);
-        var sql = 'INSERT INTO User (id, name, phone, email) VALUES (?, ?, ?, ?)';
-        connection.query(sql, [id, name, phone, email], (err, result) => {
-          if (err) {
-            console.log(err);
-            admin.auth().deleteUser(id)
-          } else {
-            resultCode = 200;
-            message = '회원가입 성공';
-          }
-        })
-      })
-      .catch(function(error){
-        console.log('User 생성 실패:', error);
-      })
+    var sql = 'INSERT INTO User (id, name, phone, email, birth) VALUES (?, ?, ?, ?, ?)';
+    connection.query(sql, [id, name, phone, email, birth], (err, result) => {
+      if (err) {
+        console.log(err);
+        admin.auth().deleteUser(id)
+      } else {
+        resultCode = 200;
+        message = '회원가입 성공';
+      }
+    });
   }
 });
 
