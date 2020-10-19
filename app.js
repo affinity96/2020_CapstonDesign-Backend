@@ -14,6 +14,18 @@ app.use(express.static('public'));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
+const multer = require('multer');
+const upload = multer({
+  storage: multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, 'HOMEKIPPA_BACKEND/images/');
+    },
+    filename: function (req, file, cb) {
+      cb(null, new Date().valueOf() + path.extname(file.originalname));
+    }
+  }),
+});
+
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
   databaseURL: "https://homekippa-c2f26.firebaseio.com"
@@ -68,6 +80,86 @@ app.post('/user/add', (req, res) => {
       }
     });
   }
+});
+
+app.post('/group/add', (req, res) => {
+  var id = req.body.userId;
+  var name = req.body.groupName;
+  var tag = createTag();
+  // 이미지 var image = req.body.groupImage;
+  var address = req.body.groupAddress;
+  // 배경사진 var background = req.body.groupBackground;
+  var introduction = req.body.groupIntroduction;
+  var resultCode = 404;
+  var message = '에러 발생';
+
+  function createTag() {
+    return randomTag = Math.floor(Math.random() * 10000);
+  };
+
+  function checkDuplication() {
+    var checkCode = true;
+
+    while (checkCode) {
+      checkCode = searchTag();
+      if(checkCode){
+        tag = createTag();
+      } else {
+        insertData();
+      };
+    };
+  };
+
+  function searchTag() {
+    var sqlSelect = 'SELECT tag FROM homekippa.Group WHERE name = ? and tag = ?';
+    connection.query(sqlSelect, [name, tag], (err, result) => {
+      if (err) {
+        console.log(err);
+        return false;
+      } else if (result[0]) {
+        return true;
+      } else {
+        return false;
+      };
+    });
+  };
+
+  function insertData() {
+    var sqlInsert = 'INSERT INTO homekippa.Group (name, tag, address, introduction) VALUES (?, ?, ?, ?)';
+    connection.query(sqlInsert, [name, tag, address, introduction], (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        updateData(result.insertId);
+      }
+    });
+  };
+
+  function updateData(groupId) {
+    var sqlUpdate = 'UPDATE homekippa.User SET group_id = ? WHERE id = ?';
+    connection.query(sqlUpdate, [groupId, id], (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        resultCode = 200;
+        message = '그룹생성 성공';
+      }
+    });
+  };
+
+  checkDuplication().then(function(){
+    console.log(req.body);
+    res.json({
+      'code': resultCode,
+      'message': message
+    });
+  });
+
+});
+
+// 이미지 업로드
+app.post('/upload', upload.single('img'), (req, res) => {
+
 });
 
 app.listen(PORT, () => {
