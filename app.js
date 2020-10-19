@@ -157,6 +157,40 @@ app.post('/group/add', (req, res) => {
 
 });
 
+app.post('/pet/add', (req, res) => {
+  var id = req.body.groupID;
+  var name = req.body.petName;
+  var birth = req.body.petBirth;
+  // 이미지 var image = req.body.petImage;
+  var species = req.body.petSpecies;
+  var reg_num = req.body.petNum;
+  var gender = req.body.petGender;
+  var neutrality = req.body.petNeu;
+  var resultCode = 404;
+  var message = '에러 발생';
+
+  insertData(() => {
+    var sqlInsert = 'INSERT INTO homekippa.Pet (id, name, birth, species, reg_num, gender, neutrality) VALUES (?, ?, ?, ?, ?, ?, ?)';
+    connection.query(sqlInsert, [id, name, birth, species, reg_num, gender, neutrality], (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        resultCode = 200;
+        message = '펫생성 성공';
+      }
+    });
+  });
+
+  insertData().then(function(){
+    console.log(req.body);
+    res.json({
+      'code': resultCode,
+      'message': message
+    });
+  });
+
+});
+
 // 이미지 업로드
 app.post('/upload', upload.single('img'), (req, res) => {
 
