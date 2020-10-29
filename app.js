@@ -4,7 +4,7 @@ var serviceAccount = require("./path/to/homekippa-c2f26-firebase-adminsdk-ffxqb-
 
 const mysql = require('mysql');
 const dbconfig = require('./config/database.js');
-const connection = mysql.createConnection(dbconfig);
+const db = mysql.createConnection(dbconfig);
 
 const app = express();
 const PORT = process.env.PORT = 3000;
@@ -25,6 +25,26 @@ const upload = multer({
     }
   }),
 });
+
+function handleDisconnect() {
+  db.connect(function(err) {
+    if(err) {
+      console.log('error when connecting to db:', err);
+      setTimeout(handleDisconnect, 2000);
+    }
+  });
+
+  db.on('error', function(err) {
+    console.log('db error', err);
+    if(err.code === 'PROTOCOL_CONNECTION_LOST') {
+      return handleDisconnect();
+    } else {
+      throw err;
+    }
+  });
+}
+
+handleDisconnect();
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
@@ -97,7 +117,7 @@ app.post('/group/add', (req, res) => {
     return randomTag = Math.floor(Math.random() * 10000);
   };
 
-  function checkDuplication() {
+  async function checkDuplication() {
     var checkCode = true;
 
     while (checkCode) {
