@@ -90,7 +90,7 @@ app.post('/user/add', (req, res) => {
 
   async function insertData() {
     var sql = 'INSERT INTO User (id, name, phone, email, birth) VALUES (?, ?, ?, ?, ?)';
-    connection.query(sql, [id, name, phone, email, birth], (err, result) => {
+    db.query(sql, [id, name, phone, email, birth], (err, result) => {
       if (err) {
         console.log(err);
         admin.auth().deleteUser(id)
@@ -132,7 +132,7 @@ app.post('/group/add', (req, res) => {
 
   function searchTag() {
     var sqlSelect = 'SELECT tag FROM homekippa.Group WHERE name = ? and tag = ?';
-    connection.query(sqlSelect, [name, tag], (err, result) => {
+    db.query(sqlSelect, [name, tag], (err, result) => {
       if (err) {
         console.log(err);
         return false;
@@ -146,7 +146,7 @@ app.post('/group/add', (req, res) => {
 
   function insertData() {
     var sqlInsert = 'INSERT INTO homekippa.Group (name, tag, address, introduction) VALUES (?, ?, ?, ?)';
-    connection.query(sqlInsert, [name, tag, address, introduction], (err, result) => {
+    db.query(sqlInsert, [name, tag, address, introduction], (err, result) => {
       if (err) {
         console.log(err);
       } else {
@@ -157,7 +157,7 @@ app.post('/group/add', (req, res) => {
 
   function updateData(groupId) {
     var sqlUpdate = 'UPDATE homekippa.User SET group_id = ? WHERE id = ?';
-    connection.query(sqlUpdate, [groupId, id], (err, result) => {
+    db.query(sqlUpdate, [groupId, id], (err, result) => {
       if (err) {
         console.log(err);
       } else {
@@ -191,7 +191,7 @@ app.post('/pet/add', (req, res) => {
 
   insertData(() => {
     var sqlInsert = 'INSERT INTO homekippa.Pet (id, name, birth, species, reg_num, gender, neutrality) VALUES (?, ?, ?, ?, ?, ?, ?)';
-    connection.query(sqlInsert, [id, name, birth, species, reg_num, gender, neutrality], (err, result) => {
+    db.query(sqlInsert, [id, name, birth, species, reg_num, gender, neutrality], (err, result) => {
       if (err) {
         console.log(err);
       } else {
