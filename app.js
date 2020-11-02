@@ -1,6 +1,7 @@
 const express = require('express');
 var admin = require('firebase-admin');
 var serviceAccount = require("./path/to/homekippa-c2f26-firebase-adminsdk-ffxqb-629c2e2eec.json");
+const AWS = require('aws-sdk');
 
 const mysql = require('mysql');
 const dbconfig = require('./config/database.js');
@@ -27,16 +28,16 @@ const upload = multer({
 });
 
 function handleDisconnect() {
-  db.connect(function(err) {
-    if(err) {
+  db.connect(function (err) {
+    if (err) {
       console.log('error when connecting to db:', err);
       setTimeout(handleDisconnect, 2000);
     }
   });
 
-  db.on('error', function(err) {
+  db.on('error', function (err) {
     console.log('db error', err);
-    if(err.code === 'PROTOCOL_CONNECTION_LOST') {
+    if (err.code === 'PROTOCOL_CONNECTION_LOST') {
       return handleDisconnect();
     } else {
       throw err;
@@ -45,6 +46,20 @@ function handleDisconnect() {
 }
 
 handleDisconnect();
+
+const endpoint = new AWS.Endpoint('https://kr.object.ncloudstorage.com');
+const region = 'kr-standard';
+const access_key = 'C924392C47B5599B416E';
+const secret_key = '0ADD8A0782AF8A09A3F3E4718AB48B2E24C5FBFB';
+
+const S3 = new AWS.S3({
+  endpoint: endpoint,
+  region: region,
+  credentials: {
+    accessKeyId: access_key,
+    secretAccessKey: secret_key
+  }
+});
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
@@ -56,19 +71,58 @@ app.post('/uid', (req, res) => {
 
   console.log("uid" + uid);
   admin.auth().getUser(uid)
-    .then(function(){
-      res.send(200, {"result": true});
+    .then(function () {
+      res.send(200, { "result": true });
       console.log(true);
     })
-    .catch(function(error){
-      res.send(200, {"result": false});
+    .catch(function (error) {
+      res.send(200, { "result": false });
       console.log(false);
-  });
+    });
 });
 
 app.get('/user', (req, res) => {
-  console.log('who get in here/users');
-  res.json(users)
+  var id = req.body.userId;
+  var name = '';
+  var group_id = '';
+  var image = '';
+  var birth = '';
+  var phone = '';
+  var email = '';
+  var resultCode = 404;
+  var message = '에러 발생';
+
+  async function queryData() {
+    var sqlSelect = 'SELECT * FROM homekippa.User WHERE id = ?';
+    db.query(sqlSelect, id, (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        resultCode = 200;
+        message = '유저정보 GET 성공';
+        name = result[0].name;
+        group_id = result[0].group_id;
+        image = result[0].image;
+        birth = result[0].birth;
+        phone = result[0].phone;
+        email = result[0].email;
+      }
+    });
+  };
+
+  queryData().then(function () {
+    console.log(req.body);
+    res.json({
+      'code': resultCode,
+      'message': message,
+      'userName': name,
+      'groupId': group_id,
+      'userImage': image,
+      'userBirth': birth,
+      'userPhone': phone,
+      'userEmail': email
+    });
+  });
 });
 
 app.post('/user/add', (req, res) => {
@@ -80,7 +134,7 @@ app.post('/user/add', (req, res) => {
   var resultCode = 404;
   var message = '에러 발생';
 
-  insertData().then(function(){
+  insertData().then(function () {
     console.log(req.body);
     res.json({
       'code': resultCode,
@@ -121,11 +175,11 @@ app.post('/group/add', (req, res) => {
     var checkCode = true;
 
     while (checkCode) {
-      checkCode = await searchTag();
-      if(checkCode){
-        tag = await createTag();
+      checkCode = searchTag();
+      if (checkCode) {
+        tag = createTag();
       } else {
-        await insertData();
+        insertData();
       };
     };
   };
@@ -167,7 +221,7 @@ app.post('/group/add', (req, res) => {
     });
   };
 
-  checkDuplication().then(function(){
+  checkDuplication().then(function () {
     console.log(req.body);
     res.json({
       'code': resultCode,
@@ -178,7 +232,7 @@ app.post('/group/add', (req, res) => {
 });
 
 app.post('/pet/add', (req, res) => {
-  var id = req.body.groupID;
+  var id = req.body.groupId;
   var name = req.body.petName;
   var birth = req.body.petBirth;
   // 이미지 var image = req.body.petImage;
@@ -201,7 +255,7 @@ app.post('/pet/add', (req, res) => {
     });
   });
 
-  insertData().then(function(){
+  insertData().then(function () {
     console.log(req.body);
     res.json({
       'code': resultCode,
