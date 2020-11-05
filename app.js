@@ -340,7 +340,9 @@ app.post('/pet/add', (req, res) => {
     console.log(2);
 
     driver.findElement(By.xpath("/html/body/div/div[5]/div[2]/div[2]/div[1]/ul/li/dl[2]/dd/a")).then(function(value){
+      console.log(7);
       value.click().then(function(value){
+        console.log(6);
         driver.sleep(3000).then(function(value){
           var pet_name = driver.findElement(By.xpath("/html/body/div/div[5]/div[2]/div[2]/div[2]/table/tbody/tr[2]/td[1]"));
           pet_name.then(function(value){
