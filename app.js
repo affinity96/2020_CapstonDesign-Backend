@@ -171,6 +171,43 @@ app.post('/user/add', (req, res) => {
   }
 });
 
+
+app.get('/group', (req, res) => {
+  var id = req.query.groupId;
+  var resultCode = 404;
+  var message = '에러 발생';
+
+  async function queryData() {
+    var sqlSelect = 'SELECT * FROM homekippa.Group WHERE id = ?';
+    db.query(sqlSelect, id, (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        console.log(result[0]);
+        resultCode = 200;
+        message = '그룹 정보 GET 성공';
+
+        res.json({
+          'code': resultCode,
+          'message': message,
+          'groupName': result[0].name,
+          'groupId': result[0].id,
+          'groupImage': result[0].image,
+          'groupAddress': result[0].address,
+          'groupIntro': result[0].introduction,
+          'groupBackground': result[0].background,
+          'groupTag': result[0].tag
+        });
+      }
+    });
+  };
+
+  queryData().then(function () {
+    console.log(id);
+  });
+});
+
+
 app.post('/group/add', (req, res) => {
   var id = req.body.userId;
   var name = req.body.groupName;
@@ -245,6 +282,33 @@ app.post('/group/add', (req, res) => {
   });
 
 });
+
+
+app.get('/pets', (req, res) => {
+  var id = req.query.groupId;
+  var resultCode = 404;
+  var message = '에러 발생';
+
+  async function queryData() {
+    var sqlSelect = 'SELECT * FROM homekippa.Pet WHERE group_id = ?';
+    db.query(sqlSelect, id, (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        console.log(result);
+        resultCode = 200;
+        message = '그룹 정보 GET 성공';
+
+        res.json(result);
+      }
+    });
+  };
+
+  queryData().then(function () {
+    console.log(id);
+  });
+});
+
 
 app.post('/pet/add', (req, res) => {
   var id = req.body.groupId;
