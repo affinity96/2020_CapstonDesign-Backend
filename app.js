@@ -3,13 +3,23 @@ var admin = require('firebase-admin');
 var serviceAccount = require("./path/to/homekippa-c2f26-firebase-adminsdk-ffxqb-629c2e2eec.json");
 const AWS = require('aws-sdk');
 
+var axios = require("axios");
+var cheerio = require('cheerio');
+var webdriver = require('selenium-webdriver');
+
+
+const By = webdriver.By;
+
 const mysql = require('mysql');
 const dbconfig = require('./config/database.js');
 const db = mysql.createConnection(dbconfig);
 
+
 const app = express();
 const PORT = process.env.PORT = 3000;
 const bodyParser = require('body-parser');
+
+
 
 app.use(express.static('public'));
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -311,37 +321,79 @@ app.get('/pets', (req, res) => {
 
 
 app.post('/pet/add', (req, res) => {
-  var id = req.body.groupId;
-  var name = req.body.petName;
-  var birth = req.body.petBirth;
-  // 이미지 var image = req.body.petImage;
-  var species = req.body.petSpecies;
-  var reg_num = req.body.petNum;
-  var gender = req.body.petGender;
-  var neutrality = req.body.petNeu;
-  var resultCode = 404;
-  var message = '에러 발생';
 
-  insertData(() => {
-    var sqlInsert = 'INSERT INTO homekippa.Pet (id, name, birth, species, reg_num, gender, neutrality) VALUES (?, ?, ?, ?, ?, ?, ?)';
-    db.query(sqlInsert, [id, name, birth, species, reg_num, gender, neutrality], (err, result) => {
-      if (err) {
-        console.log(err);
-      } else {
-        resultCode = 200;
-        message = '펫생성 성공';
-      }
+    var reg_num =req.body.petNum;
+    console.log(reg_num);
+    var message = '에러 발생';
+
+    var url = 'https://www.animal.go.kr/front/awtis/record/recordConfirmList.do?menuNo=2000000011';
+
+    var driver = new webdriver.Builder().withCapabilities(webdriver.Capabilities.chrome()).build();
+    var petName = '';
+
+    driver.get(url);
+
+    driver.findElement(By.xpath("/html/body/div/div[5]/div[2]/div[2]/div[1]/ul/li/dl[1]/dd/input")).sendKeys(reg_num);
+
+    driver.findElement(By.xpath("/html/body/div/div[5]/div[2]/div[2]/div[1]/ul/li/dl[2]/dd/a")).then(function(value){
+      value.click().then(function(value){
+        driver.sleep(3000).then(function(value){
+          var pet_name = driver.findElement(By.xpath("/html/body/div/div[5]/div[2]/div[2]/div[2]/table/tbody/tr[2]/td[1]"));
+          pet_name.then(function(value){
+            value.getText().then(function(pet_name){
+              console.log(pet_name);
+            });
+          });
+          var pet_gender = driver.findElement(By.xpath("/html/body/div/div[5]/div[2]/div[2]/div[2]/table/tbody/tr[2]/td[2]")).then(function(value){
+            value.getText().then(function(pet_gender){
+              console.log(pet_gender);
+            });
+          });
+
+          var pet_species = driver.findElement(By.xpath("/html/body/div/div[5]/div[2]/div[2]/div[2]/table/tbody/tr[3]/td[1]")).then(function(value){
+            value.getText().then(function(pet_species){
+              console.log(pet_species);
+            });
+          });
+
+          var pet_neutralization = driver.findElement(By.xpath("/html/body/div/div[5]/div[2]/div[2]/div[2]/table/tbody/tr[3]/td[2]")).then(function(value){
+            value.getText().then(function(pet_neutralization){
+              console.log(pet_neutralization);
+            });
+          });
+        });
+      });
+
+//   var id = req.body.groupId;
+//   var name = req.body.petName;
+//   var birth = req.body.petBirth;
+//   // 이미지 var image = req.body.petImage;
+//   var species = req.body.petSpecies;
+//   var reg_num = req.body.petNum;
+//   var gender = req.body.petGender;
+//   var neutrality = req.body.petNeu;
+//   var resultCode = 404;
+//   var message = '에러 발생';
+
+//   insertData(() => {
+//     var sqlInsert = 'INSERT INTO homekippa.Pet (id, name, birth, species, reg_num, gender, neutrality) VALUES (?, ?, ?, ?, ?, ?, ?)';
+//     db.query(sqlInsert, [id, name, birth, species, reg_num, gender, neutrality], (err, result) => {
+//       if (err) {
+//         console.log(err);
+//       } else {
+//         resultCode = 200;
+//         message = '펫생성 성공';
+//       }
+//     });
+//   });
+
+//   insertData().then(function () {
+//     console.log(req.body);
+//     res.json({
+//       'code': resultCode,
+//       'message': message
+
     });
-  });
-
-  insertData().then(function () {
-    console.log(req.body);
-    res.json({
-      'code': resultCode,
-      'message': message
-    });
-  });
-
 });
 
 // 이미지 업로드
