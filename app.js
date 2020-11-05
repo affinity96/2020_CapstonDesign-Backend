@@ -332,9 +332,12 @@ app.post('/pet/add', (req, res) => {
     var driver = new webdriver.Builder().withCapabilities(webdriver.Capabilities.chrome()).setChromeOptions(new chrome.Options().headless()).build();
     var petName = '';
 
+    console.log(1);
+
     driver.get(url);
 
     driver.findElement(By.xpath("/html/body/div/div[5]/div[2]/div[2]/div[1]/ul/li/dl[1]/dd/input")).sendKeys(reg_num);
+    console.log(2);
 
     driver.findElement(By.xpath("/html/body/div/div[5]/div[2]/div[2]/div[1]/ul/li/dl[2]/dd/a")).then(function(value){
       value.click().then(function(value){
@@ -342,24 +345,28 @@ app.post('/pet/add', (req, res) => {
           var pet_name = driver.findElement(By.xpath("/html/body/div/div[5]/div[2]/div[2]/div[2]/table/tbody/tr[2]/td[1]"));
           pet_name.then(function(value){
             value.getText().then(function(pet_name){
+              console.log(3);
               console.log(pet_name);
             });
           });
 
           var pet_gender = driver.findElement(By.xpath("/html/body/div/div[5]/div[2]/div[2]/div[2]/table/tbody/tr[2]/td[2]")).then(function(value){
             value.getText().then(function(pet_gender){
+              console.log(4);
               console.log(pet_gender);
             });
           });
 
           var pet_species = driver.findElement(By.xpath("/html/body/div/div[5]/div[2]/div[2]/div[2]/table/tbody/tr[3]/td[1]")).then(function(value){
             value.getText().then(function(pet_species){
+              console.log(4);
               console.log(pet_species);
             });
           });
 
           var pet_neutralization = driver.findElement(By.xpath("/html/body/div/div[5]/div[2]/div[2]/div[2]/table/tbody/tr[3]/td[2]")).then(function(value){
             value.getText().then(function(pet_neutralization){
+              console.log(5);
               console.log(pet_neutralization);
             }).then(function(value){
               driver.quit();
