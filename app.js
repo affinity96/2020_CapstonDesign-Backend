@@ -344,6 +344,7 @@ app.post('/pet/add', (req, res) => {
               console.log(pet_name);
             });
           });
+
           var pet_gender = driver.findElement(By.xpath("/html/body/div/div[5]/div[2]/div[2]/div[2]/table/tbody/tr[2]/td[2]")).then(function(value){
             value.getText().then(function(pet_gender){
               console.log(pet_gender);
@@ -359,10 +360,13 @@ app.post('/pet/add', (req, res) => {
           var pet_neutralization = driver.findElement(By.xpath("/html/body/div/div[5]/div[2]/div[2]/div[2]/table/tbody/tr[3]/td[2]")).then(function(value){
             value.getText().then(function(pet_neutralization){
               console.log(pet_neutralization);
+            }).then(function(value){
+              driver.quit();
             });
           });
         });
       });
+
 
 //   var id = req.body.groupId;
 //   var name = req.body.petName;
