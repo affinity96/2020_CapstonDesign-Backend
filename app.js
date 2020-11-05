@@ -407,7 +407,10 @@ app.post('/pet/add', (req, res) => {
 //       'code': resultCode,
 //       'message': message
 
-    });
+    }).catch((error) => {
+      assert.isNotOk(error,'Promise error');
+      done();
+    });;
 });
 
 // 이미지 업로드
