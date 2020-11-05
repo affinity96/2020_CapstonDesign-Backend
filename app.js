@@ -6,7 +6,13 @@ const AWS = require('aws-sdk');
 var axios = require("axios");
 var cheerio = require('cheerio');
 var webdriver = require('selenium-webdriver');
-var chrome = require('selenium-webdriver/chrome');
+
+var chromeCapabilities = webdriver.Capabilities.chrome();
+
+var chromeOptions = {'args': ['--headless', '--disable-dev-shm-usage','--no-sandbox', '--disable-gpu']};
+chromeCapabilities.set('chromeOptions',chromeOptions);
+
+
 
 
 const By = webdriver.By;
@@ -323,13 +329,15 @@ app.get('/pets', (req, res) => {
 
 app.post('/pet/add', (req, res) => {
 
+
     var reg_num =req.body.petNum;
+
     console.log(reg_num);
     var message = '에러 발생';
 
     var url = 'https://www.animal.go.kr/front/awtis/record/recordConfirmList.do?menuNo=2000000011';
 
-    var driver = new webdriver.Builder().withCapabilities(webdriver.Capabilities.chrome()).setChromeOptions(new chrome.Options().headless().addArguments("--disable-dev-shm-usage")).build();
+    var driver = new webdriver.Builder().withCapabilities(chromeCapabilities).setChromeOptions(chromeOptions).build();
     var petName = '';
 
     console.log(1);
