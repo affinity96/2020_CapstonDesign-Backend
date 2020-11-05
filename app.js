@@ -121,11 +121,11 @@ app.post('/group/add', (req, res) => {
     var checkCode = true;
 
     while (checkCode) {
-      checkCode = await searchTag();
+      checkCode = searchTag();
       if(checkCode){
-        tag = await createTag();
+        tag = createTag();
       } else {
-        await insertData();
+        insertData();
       };
     };
   };
