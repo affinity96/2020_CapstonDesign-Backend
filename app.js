@@ -6,6 +6,7 @@ const AWS = require('aws-sdk');
 var axios = require("axios");
 var cheerio = require('cheerio');
 var webdriver = require('selenium-webdriver');
+var chrome = require('selenium-webdriver/chrome');
 
 
 const By = webdriver.By;
@@ -328,7 +329,7 @@ app.post('/pet/add', (req, res) => {
 
     var url = 'https://www.animal.go.kr/front/awtis/record/recordConfirmList.do?menuNo=2000000011';
 
-    var driver = new webdriver.Builder().withCapabilities(webdriver.Capabilities.chrome()).build();
+    var driver = new webdriver.Builder().withCapabilities(webdriver.Capabilities.chrome()).setChromeOptions(new chrome.Options().headless()).build();
     var petName = '';
 
     driver.get(url);
