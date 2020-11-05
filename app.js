@@ -82,7 +82,7 @@ app.post('/uid', (req, res) => {
 });
 
 app.get('/user', (req, res) => {
-  var id = req.body.userId;
+  var id = req.query.userId;
   var name = '';
   var group_id = '';
   var image = '';
@@ -98,6 +98,7 @@ app.get('/user', (req, res) => {
       if (err) {
         console.log(err);
       } else {
+        console.log(result[0]);
         resultCode = 200;
         message = '유저정보 GET 성공';
         name = result[0].name;
@@ -106,22 +107,35 @@ app.get('/user', (req, res) => {
         birth = result[0].birth;
         phone = result[0].phone;
         email = result[0].email;
+
+        res.json({
+          'code': resultCode,
+          'message': message,
+          'userName': name,
+          'userId': id,
+          'groupId': group_id,
+          'userImage': image,
+          'userBirth': birth,
+          'userPhone': phone,
+          'userEmail': email
+        });
       }
     });
   };
 
   queryData().then(function () {
-    console.log(req.body);
-    res.json({
+    console.log(req.query.userId);
+/*    res.json({
       'code': resultCode,
       'message': message,
       'userName': name,
+      'userId': id,
       'groupId': group_id,
       'userImage': image,
       'userBirth': birth,
       'userPhone': phone,
       'userEmail': email
-    });
+    });*/
   });
 });
 
