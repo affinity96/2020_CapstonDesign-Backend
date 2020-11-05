@@ -329,7 +329,7 @@ app.post('/pet/add', (req, res) => {
 
     var url = 'https://www.animal.go.kr/front/awtis/record/recordConfirmList.do?menuNo=2000000011';
 
-    var driver = new webdriver.Builder().withCapabilities(webdriver.Capabilities.chrome()).setChromeOptions(new chrome.Options().headless()).build();
+    var driver = new webdriver.Builder().withCapabilities(webdriver.Capabilities.chrome()).setChromeOptions(new chrome.Options().headless().addArguments("--disable-dev-shm-usage")).build();
     var petName = '';
 
     console.log(1);
@@ -340,28 +340,28 @@ app.post('/pet/add', (req, res) => {
     console.log(2);
 
     driver.findElement(By.xpath("/html/body/div/div[5]/div[2]/div[2]/div[1]/ul/li/dl[2]/dd/a")).then(function(value){
-      console.log(7);
+      console.log(3);
       value.click().then(function(value){
-        console.log(6);
+        console.log(4);
         driver.sleep(3000).then(function(value){
           var pet_name = driver.findElement(By.xpath("/html/body/div/div[5]/div[2]/div[2]/div[2]/table/tbody/tr[2]/td[1]"));
           pet_name.then(function(value){
             value.getText().then(function(pet_name){
-              console.log(3);
+              console.log(5);
               console.log(pet_name);
             });
           });
 
           var pet_gender = driver.findElement(By.xpath("/html/body/div/div[5]/div[2]/div[2]/div[2]/table/tbody/tr[2]/td[2]")).then(function(value){
             value.getText().then(function(pet_gender){
-              console.log(4);
+              console.log(6);
               console.log(pet_gender);
             });
           });
 
           var pet_species = driver.findElement(By.xpath("/html/body/div/div[5]/div[2]/div[2]/div[2]/table/tbody/tr[3]/td[1]")).then(function(value){
             value.getText().then(function(pet_species){
-              console.log(4);
+              console.log(7);
               console.log(pet_species);
             });
           });
@@ -408,7 +408,7 @@ app.post('/pet/add', (req, res) => {
 //       'message': message
 
     }).catch((error) => {
-console.log(error);
+      console.log(error);
       console.log("error");
      });
 });
