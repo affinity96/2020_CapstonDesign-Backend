@@ -408,9 +408,9 @@ app.post('/pet/add', (req, res) => {
 //       'message': message
 
     }).catch((error) => {
-      assert.isNotOk(error,'Promise error');
-      done();
-    });;
+console.log(error);
+      console.log("error");
+     });
 });
 
 // 이미지 업로드
