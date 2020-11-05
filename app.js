@@ -333,6 +333,7 @@ app.post('/pet/add', (req, res) => {
     var petName = '';
 
     driver.get(url);
+
     driver.findElement(By.xpath("/html/body/div/div[5]/div[2]/div[2]/div[1]/ul/li/dl[1]/dd/input")).sendKeys(reg_num);
 
     driver.findElement(By.xpath("/html/body/div/div[5]/div[2]/div[2]/div[1]/ul/li/dl[2]/dd/a")).then(function(value){
