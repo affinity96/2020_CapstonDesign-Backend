@@ -45,7 +45,8 @@ function handleDisconnect() {
   });
 }
 
-handleDisconnect();
+// 일단 주석
+// handleDisconnect();
 
 const endpoint = new AWS.Endpoint('https://kr.object.ncloudstorage.com');
 const region = 'kr-standard';
@@ -174,7 +175,7 @@ app.post('/group/add', (req, res) => {
   var id = req.body.userId;
   var name = req.body.groupName;
   var tag = createTag();
-  // 이미지 var image = req.body.groupImage;
+  var image = req.body.groupProfileImage;
   var address = req.body.groupAddress;
   // 배경사진 var background = req.body.groupBackground;
   var introduction = req.body.groupIntroduction;
@@ -213,8 +214,8 @@ app.post('/group/add', (req, res) => {
   };
 
   function insertData() {
-    var sqlInsert = 'INSERT INTO homekippa.Group (name, tag, address, introduction) VALUES (?, ?, ?, ?)';
-    db.query(sqlInsert, [name, tag, address, introduction], (err, result) => {
+    var sqlInsert = 'INSERT INTO homekippa.Group (name, tag, address, image, introduction) VALUES (?, ?, ?, ?, ?)';
+    db.query(sqlInsert, [name, tag, address, image, introduction], (err, result) => {
       if (err) {
         console.log(err);
       } else {
