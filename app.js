@@ -301,7 +301,7 @@ app.post('/group/add', (req, res) => {
 });
 
 
-app.get('/pets', (req, res) => {
+app.get('/pet', (req, res) => {
   var id = req.query.groupId;
   var resultCode = 404;
   var message = '에러 발생';
