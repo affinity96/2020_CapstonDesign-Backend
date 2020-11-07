@@ -7,6 +7,13 @@ var axios = require("axios");
 var cheerio = require('cheerio');
 var webdriver = require('selenium-webdriver');
 
+var chromeCapabilities = webdriver.Capabilities.chrome();
+
+var chromeOptions = {'args': ['--headless', '--disable-dev-shm-usage','--no-sandbox', '--disable-gpu']};
+chromeCapabilities.set('chromeOptions',chromeOptions);
+
+
+
 
 const By = webdriver.By;
 
@@ -218,7 +225,7 @@ app.get('/group', (req, res) => {
 });
 
 
-app.post('/group/add', (req, res) => {
+app.post('/group/add', upload.single('img'), (req, res) => {
   var id = req.body.userId;
   var name = req.body.groupName;
   var tag = createTag();
@@ -228,6 +235,10 @@ app.post('/group/add', (req, res) => {
   var introduction = req.body.groupIntroduction;
   var resultCode = 404;
   var message = '에러 발생';
+
+  console.log(req.file);
+  console.log(req.file.filename);
+  console.log(req.body);
 
   function createTag() {
     return randomTag = Math.floor(Math.random() * 10000);
@@ -284,7 +295,6 @@ app.post('/group/add', (req, res) => {
   };
 
   checkDuplication().then(function () {
-    console.log(req.body);
     res.json({
       'code': resultCode,
       'message': message
@@ -346,48 +356,62 @@ app.get('/pet/reports', (req, res) => {
 
 app.post('/pet/add', (req, res) => {
 
+
     var reg_num =req.body.petNum;
+
     console.log(reg_num);
     var message = '에러 발생';
 
     var url = 'https://www.animal.go.kr/front/awtis/record/recordConfirmList.do?menuNo=2000000011';
 
-    var driver = new webdriver.Builder().withCapabilities(webdriver.Capabilities.chrome()).build();
+    var driver = new webdriver.Builder().withCapabilities(chromeCapabilities).setChromeOptions(chromeOptions).build();
     var petName = '';
+
+    console.log(1);
 
     driver.get(url);
 
     driver.findElement(By.xpath("/html/body/div/div[5]/div[2]/div[2]/div[1]/ul/li/dl[1]/dd/input")).sendKeys(reg_num);
+    console.log(2);
 
     driver.findElement(By.xpath("/html/body/div/div[5]/div[2]/div[2]/div[1]/ul/li/dl[2]/dd/a")).then(function(value){
+      console.log(3);
       value.click().then(function(value){
+        console.log(4);
         driver.sleep(3000).then(function(value){
           var pet_name = driver.findElement(By.xpath("/html/body/div/div[5]/div[2]/div[2]/div[2]/table/tbody/tr[2]/td[1]"));
           pet_name.then(function(value){
             value.getText().then(function(pet_name){
+              console.log(5);
               console.log(pet_name);
             });
           });
 
           var pet_gender = driver.findElement(By.xpath("/html/body/div/div[5]/div[2]/div[2]/div[2]/table/tbody/tr[2]/td[2]")).then(function(value){
             value.getText().then(function(pet_gender){
+              console.log(6);
               console.log(pet_gender);
             });
           });
 
           var pet_species = driver.findElement(By.xpath("/html/body/div/div[5]/div[2]/div[2]/div[2]/table/tbody/tr[3]/td[1]")).then(function(value){
             value.getText().then(function(pet_species){
+              console.log(7);
               console.log(pet_species);
             });
           });
 
           var pet_neutralization = driver.findElement(By.xpath("/html/body/div/div[5]/div[2]/div[2]/div[2]/table/tbody/tr[3]/td[2]")).then(function(value){
             value.getText().then(function(pet_neutralization){
+              console.log(5);
               console.log(pet_neutralization);
+            }).then(function(value){
+              driver.quit();
             });
           });
         });
       });
+
 
 //   var id = req.body.groupId;
 //   var name = req.body.petName;
@@ -418,7 +442,10 @@ app.post('/pet/add', (req, res) => {
 //       'code': resultCode,
 //       'message': message
 
-    });
+    }).catch((error) => {
+      console.log(error);
+      console.log("error");
+     });
 });
 
 // 이미지 업로드
