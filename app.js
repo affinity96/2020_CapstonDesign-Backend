@@ -36,7 +36,7 @@ const multer = require('multer');
 const upload = multer({
   storage: multer.diskStorage({
     destination: function (req, file, cb) {
-      cb(null, 'HOMEKIPPA_BACKEND/images/');
+      cb(null, './images/');
     },
     filename: function (req, file, cb) {
       cb(null, new Date().valueOf() + path.extname(file.originalname));
@@ -225,14 +225,14 @@ app.get('/group', (req, res) => {
 });
 
 
-app.post('/group/add', (req, res) => {
-  var id = req.body.userId;
-  var name = req.body.groupName;
+app.post('/group/add', upload.single('img'), (req, res) => {
+  var id = req.query.userId;
+  var name = req.query.groupName;
   var tag = createTag();
-  var image = req.body.groupProfileImage;
-  var address = req.body.groupAddress;
+  // var image = req.body.groupProfileImage;
+  var address = req.query.groupAddress;
   // 배경사진 var background = req.body.groupBackground;
-  var introduction = req.body.groupIntroduction;
+  var introduction = req.query.groupIntroduction;
   var resultCode = 404;
   var message = '에러 발생';
 
