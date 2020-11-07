@@ -225,7 +225,7 @@ app.get('/group', (req, res) => {
 });
 
 
-app.post('/group/add', (req, res) => {
+app.post('/group/add', upload.single('img'), (req, res) => {
   var id = req.body.userId;
   var name = req.body.groupName;
   var tag = createTag();
@@ -235,6 +235,10 @@ app.post('/group/add', (req, res) => {
   var introduction = req.body.groupIntroduction;
   var resultCode = 404;
   var message = '에러 발생';
+
+  console.log(req.file);
+  console.log(req.file.filename);
+  console.log(req.body);
 
   function createTag() {
     return randomTag = Math.floor(Math.random() * 10000);
@@ -291,7 +295,6 @@ app.post('/group/add', (req, res) => {
   };
 
   checkDuplication().then(function () {
-    console.log(req.body);
     res.json({
       'code': resultCode,
       'message': message
