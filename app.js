@@ -36,7 +36,7 @@ const multer = require('multer');
 const upload = multer({
   storage: multer.diskStorage({
     destination: function (req, file, cb) {
-      cb(null, 'HOMEKIPPA_BACKEND/images/');
+      cb(null, './images/');
     },
     filename: function (req, file, cb) {
       cb(null, new Date().valueOf() + path.extname(file.originalname));
@@ -229,7 +229,7 @@ app.post('/group/add', upload.single('img'), (req, res) => {
   var id = req.body.userId;
   var name = req.body.groupName;
   var tag = createTag();
-  var image = req.body.groupProfileImage;
+  // var image = req.body.groupProfileImage;
   var address = req.body.groupAddress;
   // 배경사진 var background = req.body.groupBackground;
   var introduction = req.body.groupIntroduction;
@@ -422,11 +422,6 @@ app.post('/pet/add', (req, res) => {
       console.log(error);
       console.log("error");
      });
-});
-
-// 이미지 업로드
-app.post('/upload', upload.single('img'), (req, res) => {
-
 });
 
 app.listen(PORT, () => {
