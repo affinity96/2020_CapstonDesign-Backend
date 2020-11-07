@@ -294,7 +294,7 @@ app.post('/group/add', (req, res) => {
 });
 
 
-app.get('/pets', (req, res) => {
+app.get('/pet', (req, res) => {
   var id = req.query.groupId;
   var resultCode = 404;
   var message = '에러 발생';
@@ -319,6 +319,30 @@ app.get('/pets', (req, res) => {
   });
 });
 
+app.get('/pet/reports', (req, res) => {
+  var id = req.query.petId;
+  var resultCode = 404;
+  var message = '에러 발생';
+
+  async function queryData() {
+    var sqlSelect = 'SELECT * FROM homekippa.Report WHERE group_id = ?';
+    db.query(sqlSelect, id, (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        console.log(result);
+        resultCode = 200;
+        message = '그룹 정보 GET 성공';
+
+        res.json(result);
+      }
+    });
+  };
+
+  queryData().then(function () {
+    console.log(id);
+  });
+});
 
 app.post('/pet/add', (req, res) => {
 
