@@ -1,0 +1,122 @@
+var express = require("express");
+var router = express.Router();
+
+const mysql = require("mysql");
+const dbconfig = require("../config/database.js");
+const db = mysql.createConnection(dbconfig);
+
+router.get("/", (req, res) => {
+  var id = req.query.groupId;
+  var resultCode = 404;
+  var message = "에러 발생";
+
+  async function queryData() {
+    var sqlSelect = "SELECT * FROM homekippa.Group WHERE id = ?";
+    db.query(sqlSelect, id, (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        console.log(result[0]);
+        resultCode = 200;
+        message = "그룹 정보 GET 성공";
+
+        res.json({
+          code: resultCode,
+          message: message,
+          groupName: result[0].name,
+          groupId: result[0].id,
+          groupImage: result[0].image,
+          groupAddress: result[0].address,
+          groupIntro: result[0].introduction,
+          groupBackground: result[0].background,
+          groupTag: result[0].tag,
+        });
+      }
+    });
+  }
+
+  queryData().then(function () {
+    console.log(id);
+  });
+});
+
+router.post("/add", upload.single("img"), (req, res) => {
+  var id = req.query.userId;
+  var name = req.query.groupName;
+  var tag = createTag();
+  // var image = req.body.groupProfileImage;
+  var address = req.query.groupAddress;
+  // 배경사진 var background = req.body.groupBackground;
+  var introduction = req.query.groupIntroduction;
+  var resultCode = 404;
+  var message = "에러 발생";
+
+  function createTag() {
+    return (randomTag = Math.floor(Math.random() * 10000));
+  }
+
+  async function checkDuplication() {
+    var checkCode = true;
+
+    while (checkCode) {
+      checkCode = searchTag();
+      if (checkCode) {
+        tag = createTag();
+      } else {
+        insertData();
+      }
+    }
+  }
+
+  function searchTag() {
+    var sqlSelect =
+      "SELECT tag FROM homekippa.Group WHERE name = ? and tag = ?";
+    db.query(sqlSelect, [name, tag], (err, result) => {
+      if (err) {
+        console.log(err);
+        return false;
+      } else if (result[0]) {
+        return true;
+      } else {
+        return false;
+      }
+    });
+  }
+
+  function insertData() {
+    var sqlInsert =
+      "INSERT INTO homekippa.Group (name, tag, address, image, introduction) VALUES (?, ?, ?, ?, ?)";
+    db.query(
+      sqlInsert,
+      [name, tag, address, image, introduction],
+      (err, result) => {
+        if (err) {
+          console.log(err);
+        } else {
+          updateData(result.insertId);
+        }
+      }
+    );
+  }
+
+  function updateData(groupId) {
+    var sqlUpdate = "UPDATE homekippa.User SET group_id = ? WHERE id = ?";
+    db.query(sqlUpdate, [groupId, id], (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        resultCode = 200;
+        message = "그룹생성 성공";
+      }
+    });
+  }
+
+  checkDuplication().then(function () {
+    console.log(req.body);
+    res.json({
+      code: resultCode,
+      message: message,
+    });
+  });
+});
+module.exports = router;
