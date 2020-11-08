@@ -22,7 +22,7 @@ router.get("/", (req, res) => {
       if (err) {
         console.log(err);
       } else {
-        console.log(result[0]);
+        // console.log(result[0]);
         resultCode = 200;
         message = "유저정보 GET 성공";
         name = result[0].name;
@@ -73,7 +73,7 @@ router.post("/add", (req, res) => {
   var message = "에러 발생";
 
   insertData().then(function () {
-    console.log(req.body);
+    //  console.log(req.body);
     res.json({
       code: resultCode,
       message: message,
@@ -85,7 +85,7 @@ router.post("/add", (req, res) => {
       "INSERT INTO User (id, name, phone, email, birth) VALUES (?, ?, ?, ?, ?)";
     db.query(sql, [id, name, phone, email, birth], (err, result) => {
       if (err) {
-        console.log(err);
+        //console.log(err);
         admin.auth().deleteUser(id);
       } else {
         resultCode = 200;
