@@ -36,7 +36,7 @@ const multer = require('multer');
 const upload = multer({
   storage: multer.diskStorage({
     destination: function (req, file, cb) {
-      cb(null, 'HOMEKIPPA_BACKEND/images/');
+      cb(null, './images/');
     },
     filename: function (req, file, cb) {
       cb(null, new Date().valueOf() + path.extname(file.originalname));
@@ -87,7 +87,7 @@ admin.initializeApp({
 app.post('/uid', (req, res) => {
   var uid = req.body.uid;
 
-  console.log("uid" + uid);
+ // console.log("uid" + uid);
   admin.auth().getUser(uid)
     .then(function () {
       res.send(200, { "result": true });
@@ -116,7 +116,7 @@ app.get('/user', (req, res) => {
       if (err) {
         console.log(err);
       } else {
-        console.log(result[0]);
+       // console.log(result[0]);
         resultCode = 200;
         message = '유저정보 GET 성공';
         name = result[0].name;
@@ -167,7 +167,7 @@ app.post('/user/add', (req, res) => {
   var message = '에러 발생';
 
   insertData().then(function () {
-    console.log(req.body);
+  //  console.log(req.body);
     res.json({
       'code': resultCode,
       'message': message
@@ -178,7 +178,7 @@ app.post('/user/add', (req, res) => {
     var sql = 'INSERT INTO User (id, name, phone, email, birth) VALUES (?, ?, ?, ?, ?)';
     db.query(sql, [id, name, phone, email, birth], (err, result) => {
       if (err) {
-        console.log(err);
+        //console.log(err);
         admin.auth().deleteUser(id)
       } else {
         resultCode = 200;
@@ -226,19 +226,15 @@ app.get('/group', (req, res) => {
 
 
 app.post('/group/add', upload.single('img'), (req, res) => {
-  var id = req.body.userId;
-  var name = req.body.groupName;
+  var id = req.query.userId;
+  var name = req.query.groupName;
   var tag = createTag();
-  var image = req.body.groupProfileImage;
-  var address = req.body.groupAddress;
+  // var image = req.body.groupProfileImage;
+  var address = req.query.groupAddress;
   // 배경사진 var background = req.body.groupBackground;
-  var introduction = req.body.groupIntroduction;
+  var introduction = req.query.groupIntroduction;
   var resultCode = 404;
   var message = '에러 발생';
-
-  console.log(req.file);
-  console.log(req.file.filename);
-  console.log(req.body);
 
   function createTag() {
     return randomTag = Math.floor(Math.random() * 10000);
@@ -295,6 +291,7 @@ app.post('/group/add', upload.single('img'), (req, res) => {
   };
 
   checkDuplication().then(function () {
+    console.log(req.body);
     res.json({
       'code': resultCode,
       'message': message
@@ -317,7 +314,7 @@ app.get('/pet', (req, res) => {
       } else {
         console.log(result);
         resultCode = 200;
-        message = '그룹 정보 GET 성공';
+        message = '반려동물 정보 GET 성공';
 
         res.json(result);
       }
@@ -361,97 +358,155 @@ app.post('/pet/add', (req, res) => {
 
     console.log(reg_num);
     var message = '에러 발생';
+    var resultCode = 404;
 
     var url = 'https://www.animal.go.kr/front/awtis/record/recordConfirmList.do?menuNo=2000000011';
 
     var driver = new webdriver.Builder().withCapabilities(chromeCapabilities).setChromeOptions(chromeOptions).build();
     var petName = '';
+    var petGender ='';
+    var petSpecies ='';
+    var petNeutralization='';
 
-    console.log(1);
+
 
     driver.get(url);
 
     driver.findElement(By.xpath("/html/body/div/div[5]/div[2]/div[2]/div[1]/ul/li/dl[1]/dd/input")).sendKeys(reg_num);
-    console.log(2);
+    try{
+
+    }
+    catch{
+
+    }
 
     driver.findElement(By.xpath("/html/body/div/div[5]/div[2]/div[2]/div[1]/ul/li/dl[2]/dd/a")).then(function(value){
-      console.log(3);
       value.click().then(function(value){
-        console.log(4);
         driver.sleep(3000).then(function(value){
           var pet_name = driver.findElement(By.xpath("/html/body/div/div[5]/div[2]/div[2]/div[2]/table/tbody/tr[2]/td[1]"));
           pet_name.then(function(value){
             value.getText().then(function(pet_name){
-              console.log(5);
               console.log(pet_name);
+              petName = pet_name;
             });
+          }).catch((error)=>{
+            driver.quit();
+            console.log(error);
+            console.log(1);
+
           });
 
           var pet_gender = driver.findElement(By.xpath("/html/body/div/div[5]/div[2]/div[2]/div[2]/table/tbody/tr[2]/td[2]")).then(function(value){
             value.getText().then(function(pet_gender){
-              console.log(6);
               console.log(pet_gender);
+              petGender = pet_gender;
             });
           });
 
           var pet_species = driver.findElement(By.xpath("/html/body/div/div[5]/div[2]/div[2]/div[2]/table/tbody/tr[3]/td[1]")).then(function(value){
             value.getText().then(function(pet_species){
-              console.log(7);
               console.log(pet_species);
+              petSpecies = pet_species;
             });
           });
 
           var pet_neutralization = driver.findElement(By.xpath("/html/body/div/div[5]/div[2]/div[2]/div[2]/table/tbody/tr[3]/td[2]")).then(function(value){
             value.getText().then(function(pet_neutralization){
-              console.log(5);
               console.log(pet_neutralization);
+              petNeutralization = pet_neutralization;
             }).then(function(value){
+
               driver.quit();
+              resultCode =200;
+              message = '반려동물 등록번호 조회 성공'
+
+              res.json({
+                'resultCode' : resultCode,
+                'petName' : petName,
+                'petGender' : petGender,
+                'petSpecies' : petSpecies,
+                'petNeutralization' : petNeutralization,
+                'message' : message
+              })
             });
           });
         });
       });
-
-
-//   var id = req.body.groupId;
-//   var name = req.body.petName;
-//   var birth = req.body.petBirth;
-//   // 이미지 var image = req.body.petImage;
-//   var species = req.body.petSpecies;
-//   var reg_num = req.body.petNum;
-//   var gender = req.body.petGender;
-//   var neutrality = req.body.petNeu;
-//   var resultCode = 404;
-//   var message = '에러 발생';
-
-//   insertData(() => {
-//     var sqlInsert = 'INSERT INTO homekippa.Pet (id, name, birth, species, reg_num, gender, neutrality) VALUES (?, ?, ?, ?, ?, ?, ?)';
-//     db.query(sqlInsert, [id, name, birth, species, reg_num, gender, neutrality], (err, result) => {
-//       if (err) {
-//         console.log(err);
-//       } else {
-//         resultCode = 200;
-//         message = '펫생성 성공';
-//       }
-//     });
-//   });
-
-//   insertData().then(function () {
-//     console.log(req.body);
-//     res.json({
-//       'code': resultCode,
-//       'message': message
-
     }).catch((error) => {
+      driver.quit();
       console.log(error);
       console.log("error");
      });
-});
 
-// 이미지 업로드
-app.post('/upload', upload.single('img'), (req, res) => {
 
 });
+
+app.post('/pet/add/des', (req,res) => {
+  var id = req.body.groupId;
+  var name = req.body.petName;
+  var birth = req.body.petBirth; //
+  // 이미지 var image = req.body.petImage;
+  var species = req.body.petSpecies; // 종
+  var reg_num = req.body.petRegNum; // 등록번호
+  var gender = req.body.petGender; // 성
+  var neutrality = req.body.petNeutralization; // 중성
+  var resultCode = 404;
+  var message = '에러 발생';
+
+  insertData(() => {
+    var sqlInsert = 'INSERT INTO homekippa.Pet (id, name, birth, species, reg_num, gender, neutrality) VALUES (?, ?, ?, ?, ?, ?, ?)';
+    db.query(sqlInsert, [id, name, birth, species, reg_num, gender, neutrality], (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        resultCode = 200;
+        message = '펫생성 성공';
+      }
+    });
+  });
+
+  insertData().then(function () {
+    console.log(req.body);
+    res.json({
+      'code': resultCode,
+      'message': message
+    });
+  });
+});
+
+
+app.post('/pet/reports/add', (req, res) => {
+  var group_id = req.body.GroupId;
+  var pet_id = req.body.PetId;
+  var title = req.body.dailyWorkName;
+  
+  var alarm = req.body.dailyWorkAlarm;
+  var desc = req.body.dailyWorkDesc;
+  var time = req.body.dailyWorkTime;
+  var resultCode = 404;
+  var message = '에러 발생';  
+
+  async function insertData() {
+    var sqlInsert = "INSERT INTO homekippa.Report (group_id, pet_id, title, alarm, `desc`, `time`) VALUES (?, ?, ?, ?, ?, ?);";
+    db.query(sqlInsert, [group_id, pet_id, title, alarm, desc, time], (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        resultCode = 200;
+        message = '그룹추가성공'
+        addNewReport();
+      }
+    });
+  };
+  insertData();
+  function addNewReport(){
+    res.json({
+      'code': resultCode,
+      'message': message
+    });
+  }
+});
+
 
 app.listen(PORT, () => {
   console.log('Server is running at:', PORT);
