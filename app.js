@@ -436,7 +436,7 @@ app.post('/pet/add/des', (req,res) => {
         console.log(err);
       } else {
         resultCode = 200;
-        message = '펫생성 성공';
+        message = '반려동물 생성 성공';
       }
     });
   });
