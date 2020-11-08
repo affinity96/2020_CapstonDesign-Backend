@@ -32,10 +32,12 @@ const app = express();
 const userRouter = require("./routes/user");
 const groupRouter = require("./routes/group");
 const petRouter = require("./routes/pet");
+const postRouter = require("./routes/post");
 
 app.use("/user", userRouter);
 app.use("/group", groupRouter);
 app.use("/pet", petRouter);
+app.use("/post", postRouter);
 
 app.use(express.static("public"));
 app.use(bodyParser.urlencoded({ extended: true }));
