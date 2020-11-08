@@ -469,7 +469,7 @@ app.post('/pet/reports/add', (req, res) => {
         console.log(err);
       } else {
         resultCode = 200;
-        message = '그룹추가성공'
+        message = '일과추가성공'
         addNewReport();
       }
     });
