@@ -80,7 +80,7 @@ admin.initializeApp({
 app.post('/uid', (req, res) => {
   var uid = req.body.uid;
 
-  console.log("uid" + uid);
+ // console.log("uid" + uid);
   admin.auth().getUser(uid)
     .then(function () {
       res.send(200, { "result": true });
@@ -109,7 +109,7 @@ app.get('/user', (req, res) => {
       if (err) {
         console.log(err);
       } else {
-        console.log(result[0]);
+       // console.log(result[0]);
         resultCode = 200;
         message = '유저정보 GET 성공';
         name = result[0].name;
@@ -160,7 +160,7 @@ app.post('/user/add', (req, res) => {
   var message = '에러 발생';
 
   insertData().then(function () {
-    console.log(req.body);
+  //  console.log(req.body);
     res.json({
       'code': resultCode,
       'message': message
@@ -171,7 +171,7 @@ app.post('/user/add', (req, res) => {
     var sql = 'INSERT INTO User (id, name, phone, email, birth) VALUES (?, ?, ?, ?, ?)';
     db.query(sql, [id, name, phone, email, birth], (err, result) => {
       if (err) {
-        console.log(err);
+        //console.log(err);
         admin.auth().deleteUser(id)
       } else {
         resultCode = 200;
@@ -294,7 +294,7 @@ app.post('/group/add', (req, res) => {
 });
 
 
-app.get('/pets', (req, res) => {
+app.get('/pet', (req, res) => {
   var id = req.query.groupId;
   var resultCode = 404;
   var message = '에러 발생';
@@ -307,7 +307,7 @@ app.get('/pets', (req, res) => {
       } else {
         console.log(result);
         resultCode = 200;
-        message = '그룹 정보 GET 성공';
+        message = '반려동물 정보 GET 성공';
 
         res.json(result);
       }
@@ -396,11 +396,51 @@ app.post('/pet/add', (req, res) => {
     });
 });
 
+
 // 이미지 업로드
 app.post('/upload', upload.single('img'), (req, res) => {
 
 });
 
+
+app.post('/pet/reports/add', (req, res) => {
+  var group_id = req.body.GroupId;
+  var pet_id = req.body.PetId;
+  var title = req.body.dailyWorkName;
+  
+  var alarm = req.body.dailyWorkAlarm;
+  var desc = req.body.dailyWorkDesc;
+  var time = req.body.dailyWorkTime;
+  var resultCode = 404;
+  var message = '에러 발생';  
+
+  async function insertData() {
+    var sqlInsert = "INSERT INTO homekippa.Report (group_id, pet_id, title, alarm, `desc`, `time`) VALUES (?, ?, ?, ?, ?, ?);";
+    db.query(sqlInsert, [group_id, pet_id, title, alarm, desc, time], (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        resultCode = 200;
+        message = '그룹추가성공'
+        console.log("성공같은데?")
+        
+      }
+    });
+  };
+
+  insertData().then(function () {
+    console.log("공성?", req.body);
+    res.json({
+      'code': resultCode,
+      'message': message
+    });
+  }).catch((error) => {
+    console.log(error);
+  });
+});
+
+
 app.listen(PORT, () => {
   console.log('Server is running at:', PORT);
 });
+
