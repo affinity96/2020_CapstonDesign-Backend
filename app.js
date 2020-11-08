@@ -470,21 +470,17 @@ app.post('/pet/reports/add', (req, res) => {
       } else {
         resultCode = 200;
         message = '그룹추가성공'
-        console.log("성공같은데?")
-        
+        addNewReport();
       }
     });
   };
-
-  insertData().then(function () {
-    console.log("공성?", req.body);
+  insertData();
+  function addNewReport(){
     res.json({
       'code': resultCode,
       'message': message
     });
-  }).catch((error) => {
-    console.log(error);
-  });
+  }
 });
 
 
