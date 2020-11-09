@@ -100,7 +100,7 @@ router.post("/add", (req, res) => {
       "INSERT INTO homekippa.Group (name, tag, address, introduction) VALUES (?, ?, ?, ?)";
     db.query(
       sqlInsert,
-      [name, tag, address, image, introduction],
+      [name, tag, address, introduction],
       (err, result) => {
         if (err) {
           console.log(err);
