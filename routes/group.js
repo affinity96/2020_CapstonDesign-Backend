@@ -6,15 +6,14 @@ const dbconfig = require("../config/database.js");
 const db = mysql.createConnection(dbconfig);
 
 const multer = require("multer");
-const upload = multer({
-  storage: multer.diskStorage({
-    destination: function (req, file, cb) {
-      cb(null, "./images/");
-    },
-    filename: function (req, file, cb) {
-      cb(null, new Date().valueOf() + path.extname(file.originalname));
-    },
-  }),
+
+storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "./images/");
+  },
+  filename: function (req, file, cb) {
+    cb(null, new Date().valueOf() + path.extname(file.originalname));
+  },
 });
 
 router.get("/", (req, res) => {
@@ -132,7 +131,9 @@ router.post("/add", (req, res) => {
   });
 });
 
-router.post("/add/images", upload.single("img"), (req, res) => {
+router.post("/add/images", multer({
+  storage: storage
+}).single('upload'), (req, res) => {
   console.log(req.file);
   console.log(req.filename);
   console.log(req.body);
