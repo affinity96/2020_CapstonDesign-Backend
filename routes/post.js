@@ -5,7 +5,7 @@ const mysql = require("mysql");
 const dbconfig = require("../config/database.js");
 const db = mysql.createConnection(dbconfig);
 
-router.get("/", (req, res) => {
+router.get("/group", (req, res) => {
   var id = req.query.groupId;
   var resultCode = 404;
   var message = "에러 발생";
@@ -15,10 +15,11 @@ router.get("/", (req, res) => {
     db.query(sqlSelect, id, (err, result) => {
       if (err) {
         console.log(err);
+        console.log(result);
       } else {
         console.log(result);
         resultCode = 200;
-        message = "게시글 GET 성공";
+        message = "그룹 게시글 GET 성공";
 
         res.json(result);
       }

@@ -6,7 +6,6 @@ const AWS = require("aws-sdk");
 var axios = require("axios");
 var cheerio = require("cheerio");
 
-
 const mysql = require("mysql");
 const dbconfig = require("./config/database.js");
 const db = mysql.createConnection(dbconfig);
