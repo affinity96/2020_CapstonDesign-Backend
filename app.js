@@ -1,4 +1,5 @@
 const express = require("express");
+
 var admin = require("firebase-admin");
 var serviceAccount = require("./path/to/homekippa-c2f26-firebase-adminsdk-ffxqb-629c2e2eec.json");
 const AWS = require("aws-sdk");

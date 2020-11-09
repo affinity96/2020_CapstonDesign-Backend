@@ -52,14 +52,14 @@ router.get("/", (req, res) => {
   });
 });
 
-router.post("/add", upload.single("img"), (req, res) => {
-  var id = req.query.userId;
-  var name = req.query.groupName;
+router.post("/add", (req, res) => {
+  var id = req.body.userId;
+  var name = req.body.groupName;
   var tag = createTag();
   // var image = req.body.groupProfileImage;
-  var address = req.query.groupAddress;
+  var address = req.body.groupAddress;
   // 배경사진 var background = req.body.groupBackground;
-  var introduction = req.query.groupIntroduction;
+  var introduction = req.body.groupIntroduction;
   var resultCode = 404;
   var message = "에러 발생";
 
@@ -97,10 +97,10 @@ router.post("/add", upload.single("img"), (req, res) => {
 
   function insertData() {
     var sqlInsert =
-      "INSERT INTO homekippa.Group (name, tag, address, image, introduction) VALUES (?, ?, ?, ?, ?)";
+      "INSERT INTO homekippa.Group (name, tag, address, introduction) VALUES (?, ?, ?, ?)";
     db.query(
       sqlInsert,
-      [name, tag, address, image, introduction],
+      [name, tag, address, introduction],
       (err, result) => {
         if (err) {
           console.log(err);
@@ -131,4 +131,21 @@ router.post("/add", upload.single("img"), (req, res) => {
     });
   });
 });
+
+router.post("/add/images", upload.single("img"), (req, res) => {
+  console.log(req.file);
+  console.log(req.filename);
+  console.log(req.body);
+
+  var resultCode = 404;
+  var message = "에러 발생";
+
+  if (err) {
+    console.log(err);
+  } else {
+    resultCode = 200;
+    message = "그룹생성 성공";
+  }
+});
+
 module.exports = router;

@@ -47,6 +47,7 @@ router.get("/", (req, res) => {
 });
 
 router.post("/add", (req, res) => {
+  
   var reg_num = req.body.petNum;
 
   console.log(reg_num);
@@ -167,6 +168,7 @@ router.post("/add", (req, res) => {
 });
 
 router.post("/add/des", (req, res) => {
+
   var id = req.body.groupId;
   var name = req.body.petName;
   var birth = req.body.petBirth; //
@@ -205,6 +207,7 @@ router.post("/add/des", (req, res) => {
 });
 
 router.post("/reports/add", (req, res) => {
+  
   var group_id = req.body.GroupId;
   var pet_id = req.body.PetId;
   var title = req.body.dailyWorkName;
