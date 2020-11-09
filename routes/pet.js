@@ -1,6 +1,22 @@
 var express = require("express");
 var router = express.Router();
 
+var webdriver = require("selenium-webdriver");
+
+var chromeCapabilities = webdriver.Capabilities.chrome();
+
+var chromeOptions = {
+  args: [
+    "--headless",
+    "--disable-dev-shm-usage",
+    "--no-sandbox",
+    "--disable-gpu",
+  ],
+};
+chromeCapabilities.set("chromeOptions", chromeOptions);
+
+const By = webdriver.By;
+
 const mysql = require("mysql");
 const dbconfig = require("../config/database.js");
 const db = mysql.createConnection(dbconfig);
