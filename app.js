@@ -34,14 +34,14 @@ const groupRouter = require("./routes/group");
 const petRouter = require("./routes/pet");
 const postRouter = require("./routes/post");
 
+app.use(express.static("public"));
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+
 app.use("/user", userRouter);
 app.use("/group", groupRouter);
 app.use("/pet", petRouter);
 app.use("/post", postRouter);
-
-app.use(express.static("public"));
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
 
 const multer = require("multer");
 const upload = multer({
@@ -73,6 +73,42 @@ function handleDisconnect() {
   });
 }
 
+// router.post("/reports/add", (req, res) => {
+//   var group_id = req.body.GroupId;
+//   var pet_id = req.body.PetId;
+//   var title = req.body.dailyWorkName;
+
+//   var alarm = req.body.dailyWorkAlarm;
+//   var desc = req.body.dailyWorkDesc;
+//   var time = req.body.dailyWorkTime;
+//   var resultCode = 404;
+//   var message = "에러 발생";
+
+//   async function insertData() {
+//     var sqlInsert =
+//       "INSERT INTO homekippa.Report (group_id, pet_id, title, alarm, `desc`, `time`) VALUES (?, ?, ?, ?, ?, ?);";
+//     db.query(
+//       sqlInsert,
+//       [group_id, pet_id, title, alarm, desc, time],
+//       (err, result) => {
+//         if (err) {
+//           console.log(err);
+//         } else {
+//           resultCode = 200;
+//           message = "그룹추가성공";
+//           addNewReport();
+//         }
+//       }
+//     );
+//   }
+//   insertData();
+//   function addNewReport() {
+//     res.json({
+//       code: resultCode,
+//       message: message,
+//     });
+//   }
+// });
 // 일단 주석
 // handleDisconnect();
 
