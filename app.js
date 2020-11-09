@@ -7,7 +7,6 @@ const AWS = require("aws-sdk");
 var axios = require("axios");
 var cheerio = require("cheerio");
 
-
 const mysql = require("mysql");
 const dbconfig = require("./config/database.js");
 const db = mysql.createConnection(dbconfig);
@@ -30,18 +29,6 @@ app.use("/group", groupRouter);
 app.use("/pet", petRouter);
 app.use("/post", postRouter);
 
-const multer = require("multer");
-const upload = multer({
-  storage: multer.diskStorage({
-    destination: function (req, file, cb) {
-      cb(null, "./images/");
-    },
-    filename: function (req, file, cb) {
-      cb(null, new Date().valueOf() + path.extname(file.originalname));
-    },
-  }),
-});
-
 function handleDisconnect() {
   db.connect(function (err) {
     if (err) {
@@ -62,20 +49,6 @@ function handleDisconnect() {
 
 // 일단 주석
 // handleDisconnect();
-
-const endpoint = new AWS.Endpoint("https://kr.object.ncloudstorage.com");
-const region = "kr-standard";
-const access_key = "C924392C47B5599B416E";
-const secret_key = "0ADD8A0782AF8A09A3F3E4718AB48B2E24C5FBFB";
-
-const S3 = new AWS.S3({
-  endpoint: endpoint,
-  region: region,
-  credentials: {
-    accessKeyId: access_key,
-    secretAccessKey: secret_key,
-  },
-});
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
