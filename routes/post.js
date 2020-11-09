@@ -1,22 +1,6 @@
 var express = require("express");
 var router = express.Router();
 
-var webdriver = require("selenium-webdriver");
-
-var chromeCapabilities = webdriver.Capabilities.chrome();
-
-var chromeOptions = {
-  args: [
-    "--headless",
-    "--disable-dev-shm-usage",
-    "--no-sandbox",
-    "--disable-gpu",
-  ],
-};
-chromeCapabilities.set("chromeOptions", chromeOptions);
-
-const By = webdriver.By;
-
 const mysql = require("mysql");
 const dbconfig = require("../config/database.js");
 const db = mysql.createConnection(dbconfig);
@@ -27,14 +11,14 @@ router.get("/", (req, res) => {
   var message = "에러 발생";
 
   async function queryData() {
-    var sqlSelect = "SELECT * FROM homekippa.Pet WHERE group_id = ?";
+    var sqlSelect = "SELECT * FROM homekippa.Post WHERE group_id = ?";
     db.query(sqlSelect, id, (err, result) => {
       if (err) {
         console.log(err);
       } else {
         console.log(result);
         resultCode = 200;
-        message = "그룹 정보 GET 성공";
+        message = "게시글 GET 성공";
 
         res.json(result);
       }
@@ -47,7 +31,6 @@ router.get("/", (req, res) => {
 });
 
 router.post("/add", (req, res) => {
-  
   var reg_num = req.body.petNum;
 
   console.log(reg_num);
@@ -168,7 +151,6 @@ router.post("/add", (req, res) => {
 });
 
 router.post("/add/des", (req, res) => {
-
   var id = req.body.groupId;
   var name = req.body.petName;
   var birth = req.body.petBirth; //
@@ -207,7 +189,6 @@ router.post("/add/des", (req, res) => {
 });
 
 router.post("/reports/add", (req, res) => {
-  
   var group_id = req.body.GroupId;
   var pet_id = req.body.PetId;
   var title = req.body.dailyWorkName;

@@ -6,21 +6,7 @@ const AWS = require("aws-sdk");
 
 var axios = require("axios");
 var cheerio = require("cheerio");
-var webdriver = require("selenium-webdriver");
 
-var chromeCapabilities = webdriver.Capabilities.chrome();
-
-var chromeOptions = {
-  args: [
-    "--headless",
-    "--disable-dev-shm-usage",
-    "--no-sandbox",
-    "--disable-gpu",
-  ],
-};
-chromeCapabilities.set("chromeOptions", chromeOptions);
-
-const By = webdriver.By;
 
 const mysql = require("mysql");
 const dbconfig = require("./config/database.js");
@@ -32,7 +18,8 @@ const bodyParser = require("body-parser");
 const app = express();
 const userRouter = require("./routes/user");
 const groupRouter = require("./routes/group");
-const petRouter = require('./routes/pet');
+const petRouter = require("./routes/pet");
+const postRouter = require("./routes/post");
 
 app.use(express.static("public"));
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -40,7 +27,8 @@ app.use(bodyParser.json());
 
 app.use("/user", userRouter);
 app.use("/group", groupRouter);
-app.use('/pet', petRouter);
+app.use("/pet", petRouter);
+app.use("/post", postRouter);
 
 const multer = require("multer");
 const upload = multer({
