@@ -1,3 +1,3 @@
-const firebase = require("firebase/app");
+//const firebase = require("firebase/app");
 
-const messaging = firebase.messaging();
+//const messaging = firebase.messaging();

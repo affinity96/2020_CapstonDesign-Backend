@@ -35,13 +35,16 @@ router.get("/", (req, res) => {
         res.json({
           code: resultCode,
           message: message,
+          result
+/*          code: resultCode,
+          message: message,
           userName: name,
           userId: id,
           groupId: group_id,
           userImage: image,
           userBirth: birth,
           userPhone: phone,
-          userEmail: email,
+          userEmail: email,*/
         });
       }
     });
@@ -93,6 +96,31 @@ router.post("/add", (req, res) => {
       }
     });
   }
+});
+
+router.get("/group", (req, res) => {
+  var id = req.query.groupId;
+  var resultCode = 404;
+  var message = "에러 발생";
+
+  async function queryData() {
+    var sqlSelect = "SELECT * FROM homekippa.User WHERE group_id = ?";
+    db.query(sqlSelect, id, (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        console.log(result);
+        resultCode = 200;
+        message = "사용자 정보 GET 성공";
+
+        res.json(result);
+      }
+    });
+  }
+
+  queryData().then(function () {
+    console.log(id);
+  });
 });
 
 module.exports = router;
