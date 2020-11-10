@@ -34,7 +34,7 @@ router.get("/", (req, res) => {
       } else {
         console.log(result);
         resultCode = 200;
-        message = "그룹 정보 GET 성공";
+        message = "펫 정보 GET 성공";
 
         res.json(result);
       }
