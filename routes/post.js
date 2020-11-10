@@ -46,7 +46,6 @@ router.get("/location", (req, res) => {
         if (err) {
           console.log(err);
         } else {
-          // postList = result;
           resolve(result);
         }
       });
@@ -61,19 +60,19 @@ router.get("/location", (req, res) => {
           if (err) {
             console.log(err);
           } else {
+            console.log("in delay");
             console.log(result);
-            // groupList.push(result);
             resolve(result);
           }
         });
-      }, 0);
+      }, 1);
     });
   }
   async function getGroupData(list) {
     var temp_list = [];
     for (var i = 0; i < list.length; i++) {
       var t = await delay(list[i]);
-      temp_list.push(t);
+      temp_list.push(t[0]);
     }
     return temp_list;
   }
@@ -86,6 +85,7 @@ router.get("/location", (req, res) => {
     .then(function (data) {
       postList = data;
       groupList = getGroupData(data);
+
       return groupList;
     })
     .then(function (data) {
@@ -94,7 +94,8 @@ router.get("/location", (req, res) => {
       console.log(postList);
       console.log("group data");
       console.log(groupList);
-      return res.json(groupList);
+      console.log({ groupData: groupList, postData: postList });
+      res.json({ groupData: groupList, postData: postList });
     });
 });
 
