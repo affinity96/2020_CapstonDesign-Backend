@@ -36,31 +36,18 @@ router.get("/", (req, res) => {
           code: resultCode,
           message: message,
           userName: name,
-          userId: id,
-          groupId: group_id,
-          userImage: image,
-          userBirth: birth,
-          userPhone: phone,
-          userEmail: email,
+          id,
+          group_id,
+          image,
+          birth,
+          phone,
+          email,
         });
       }
     });
   }
 
-  queryData().then(function () {
-    console.log(req.query.userId);
-    /*    res.json({
-        'code': resultCode,
-        'message': message,
-        'userName': name,
-        'userId': id,
-        'groupId': group_id,
-        'userImage': image,
-        'userBirth': birth,
-        'userPhone': phone,
-        'userEmail': email
-      });*/
-  });
+  queryData();
 });
 
 router.post("/add", (req, res) => {
@@ -99,7 +86,7 @@ router.get("/group", (req, res) => {
   var id = req.query.groupId;
   var resultCode = 404;
   var message = "에러 발생";
-  var users = new Array();
+  var users = [];
 
   async function queryData() {
     var sqlSelect = "SELECT * FROM homekippa.User WHERE group_id = ?";
@@ -107,32 +94,16 @@ router.get("/group", (req, res) => {
       if (err) {
         console.log(err);
       } else {
-        console.log(result);
+        console.log("result: ", result);
         resultCode = 200;
         message = "사용자 정보 GET 성공";
 
-        users.push(result.map((v) => {
-          return {
-            code: resultCode,
-            message: message,
-            userName: v.name,
-            userId: v.id,
-            groupId: v.group_id,
-            userImage: v.image,
-            userBirth: v.birth,
-            userPhone: v.phone,
-            userEmail: v.email
-          }
-        }));
-        console.log(users);
-        res.json(users);
+        res.json(result);
       }
     });
   }
 
-  queryData().then(function () {
-    console.log(id);
-  });
+  queryData();
 });
 
 module.exports = router;
