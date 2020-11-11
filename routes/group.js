@@ -52,6 +52,38 @@ router.get("/", (req, res) => {
   });
 });
 
+router.post("/invite", (req, res) =>{
+  var from_group = req.body.from_group;
+  var to_user = req.body.to_user;
+
+  async function insertData(group, user) {
+    var checksql = "SELECT COUNT(IF(from_group = ? AND to_user = ?, 1, null)) AS count FROM GroupInvite";
+    db.query(checksql, [group, user], (err, result) =>{
+      if(err){
+        res.send({ result: false });
+        console.log("초대 전송 실패");
+      } else if(result[0].count > 0){
+        res.send({ result: true });
+        console.log("초대 전송 성공");
+      } else{
+        var sql = "INSERT INTO GroupInvite (from_group, to_user) VALUES (?, ?)";
+        db.query(sql, [group, user], (err, _) => {
+          if (err) {
+            res.send({ result: false });
+            console.log("초대 전송 실패");
+          } else {
+            res.send({ result: true });
+            console.log("초대 전송 성공");
+          }
+        });
+      }
+    })
+
+  }
+
+  insertData(from_group, to_user);
+});
+
 router.post("/add", (req, res) => {
   var id = req.body.userId;
   var name = req.body.groupName;

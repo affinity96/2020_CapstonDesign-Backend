@@ -86,11 +86,34 @@ router.get("/group", (req, res) => {
   var id = req.query.groupId;
   var resultCode = 404;
   var message = "에러 발생";
-  var users = [];
 
   async function queryData() {
     var sqlSelect = "SELECT * FROM homekippa.User WHERE group_id = ?";
     db.query(sqlSelect, id, (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        console.log("result: ", result);
+        resultCode = 200;
+        message = "사용자 정보 GET 성공";
+
+        res.json(result);
+      }
+    });
+  }
+
+  queryData();
+});
+
+router.get("/list/filter", (req, res) => {
+  var filter = '%' + req.query.searchFilter + '%';
+  var resultCode = 404;
+  var message = "에러 발생";
+
+  console.log(filter);
+  async function queryData() {
+    var sqlSelect = "SELECT * FROM homekippa.User WHERE ((name LIKE ?) OR (phone LIKE ?) OR (email LIKE ?)) AND (group_id is NULL)";
+    db.query(sqlSelect, [filter, filter, filter], (err, result) => {
       if (err) {
         console.log(err);
       } else {
