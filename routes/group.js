@@ -52,16 +52,24 @@ router.get("/", (req, res) => {
   });
 });
 
-router.post("/add", (req, res) => {
+router.post("/add", multer({
+  storage: storage
+}).single('upload'), (req, res) => {
   var id = req.body.userId;
   var name = req.body.groupName;
   var tag = createTag();
-  // var image = req.body.groupProfileImage;
+  var image = '';
   var address = req.body.groupAddress;
   // 배경사진 var background = req.body.groupBackground;
   var introduction = req.body.groupIntroduction;
   var resultCode = 404;
   var message = "에러 발생";
+
+  if (req.file) {
+    image = path.join(__dirname, '..', 'images/') + req.file.filename;
+  } else {
+    image = path.join(__dirname, '..', 'images/') + "profile.png";
+  }
 
   function createTag() {
     return (randomTag = Math.floor(Math.random() * 10000));
@@ -97,10 +105,10 @@ router.post("/add", (req, res) => {
 
   function insertData() {
     var sqlInsert =
-      "INSERT INTO homekippa.Group (name, tag, address, introduction) VALUES (?, ?, ?, ?)";
+      "INSERT INTO homekippa.Group (name, tag, image, address, introduction) VALUES (?, ?, ?, ?, ?)";
     db.query(
       sqlInsert,
-      [name, tag, address, introduction],
+      [name, tag, image, address, introduction],
       (err, result) => {
         if (err) {
           console.log(err);
@@ -124,30 +132,13 @@ router.post("/add", (req, res) => {
   }
 
   checkDuplication().then(function () {
+    console.log(req.file);
     console.log(req.body);
     res.json({
       code: resultCode,
       message: message,
     });
   });
-});
-
-router.post("/add/images", multer({
-  storage: storage
-}).single('upload'), (req, res) => {
-  console.log(req.file);
-  console.log(req.filename);
-  console.log(req.body);
-
-  var resultCode = 404;
-  var message = "에러 발생";
-
-  if (err) {
-    console.log(err);
-  } else {
-    resultCode = 200;
-    message = "그룹생성 성공";
-  }
 });
 
 module.exports = router;
