@@ -33,7 +33,6 @@ router.get("/group", (req, res) => {
 });
 
 router.get("/location", (req, res) => {
-  // var id = req.query.groupId;
   var postList = [];
   var groupList = [];
   var resultCode = 404;
