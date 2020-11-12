@@ -47,7 +47,7 @@ router.get("/", (req, res) => {
 });
 
 router.post("/add", (req, res) => {
-  
+
   var reg_num = req.body.petNum;
 
   console.log(reg_num);
@@ -180,7 +180,7 @@ router.post("/add/des", (req, res) => {
   var resultCode = 404;
   var message = "에러 발생";
 
-  insertData(() => {
+  async function insertData(){
     var sqlInsert =
       "INSERT INTO homekippa.Pet (id, name, birth, species, reg_num, gender, neutrality) VALUES (?, ?, ?, ?, ?, ?, ?)";
     db.query(
@@ -192,22 +192,25 @@ router.post("/add/des", (req, res) => {
         } else {
           resultCode = 200;
           message = "펫생성 성공";
+          addNewPet();
         }
       }
     );
-  });
+  }
 
-  insertData().then(function () {
+  insertData();
+  function addNewPet()
+  {
     console.log(req.body);
     res.json({
       code: resultCode,
       message: message,
     });
-  });
+  }
 });
 
 router.post("/reports/add", (req, res) => {
-  
+
   var group_id = req.body.GroupId;
   var pet_id = req.body.PetId;
   var title = req.body.dailyWorkName;
