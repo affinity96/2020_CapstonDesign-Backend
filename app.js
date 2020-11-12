@@ -19,6 +19,7 @@ const userRouter = require("./routes/user");
 const groupRouter = require("./routes/group");
 const petRouter = require("./routes/pet");
 const postRouter = require("./routes/post");
+//const firebaseRouter = require("./routes/firebase");
 
 app.use(express.static("public"));
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -28,6 +29,7 @@ app.use("/user", userRouter);
 app.use("/group", groupRouter);
 app.use("/pet", petRouter);
 app.use("/post", postRouter);
+//app.use("/firebase", firebaseRouter);
 
 function handleDisconnect() {
   db.connect(function (err) {
