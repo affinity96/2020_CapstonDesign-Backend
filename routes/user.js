@@ -35,7 +35,7 @@ router.get("/", (req, res) => {
         res.json({
           code: resultCode,
           message: message,
-          userName: name,
+          name,
           id,
           group_id,
           image,
