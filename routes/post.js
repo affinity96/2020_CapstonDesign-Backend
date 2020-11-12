@@ -89,11 +89,6 @@ router.get("/location", (req, res) => {
     })
     .then(function (data) {
       groupList = data;
-      console.log("post data");
-      console.log(postList);
-      console.log("group data");
-      console.log(groupList);
-      console.log({ groupData: groupList, postData: postList });
       res.json({ groupData: groupList, postData: postList });
     });
 });
