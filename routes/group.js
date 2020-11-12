@@ -158,7 +158,6 @@ router.post("/add", multer({
       if (err) {
         console.log(err);
       } else {
-        console.log("외않돼?")
         resultCode = 200;
         message = "그룹생성 성공";
         hello();
@@ -167,7 +166,6 @@ router.post("/add", multer({
   }
 
   function hello(){
-    console.log("여기는 왜 안와?")
     console.log(req.file);
     console.log(req.body);
     res.json({
