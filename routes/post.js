@@ -124,6 +124,58 @@ router.get("/follwer", (req, res) => {
   });
 });
 
+router.post("/setlike", (req, res) => {
+  var postid = req.body.PostId;
+  var userid = req.body.UserId;
+  var isliked = req.body.isLiked;
+
+  console.log("postid" + postid);
+
+  if (isliked) {
+    var sqlLike =
+      "INSERT INTO homekippa.Like (post_id, user_id) VALUES (?, ?);";
+    var sqlPost =
+      "UPDATE homekippa.Post SET like_num=like_num + 1  WHERE id = ?;";
+  } else {
+    var sqlLike =
+      "DELETE FROM homekippa.Like WHERE post_id = ? AND user_id = ? ;";
+    var sqlPost =
+      "UPDATE homekippa.Post SET like_num =like_num - 1 where id= ?";
+  }
+
+  async function setLikeQuery() {
+    db.query(sqlLike, [postid, userid], (err, result) => {
+      if (err) {
+        console.log(err);
+        console.log(result);
+      } else {
+        resultCode = 200;
+        message = "like SET 성공";
+      }
+    });
+
+    db.query(sqlPost, postid, (err, result) => {
+      if (err) {
+        console.log(err);
+        console.log(result);
+      } else {
+        resultCode = 200;
+        message = "like SET 성공";
+      }
+    });
+  }
+
+  setLikeQuery().then(function () {
+    res.json({
+      code: resultCode,
+      message: message,
+    });
+  });
+
+  var resultCode = 404;
+  var message = "에러 발생";
+});
+
 router.post("/add", (req, res) => {
   var id = req.query.groupId;
   var resultCode = 404;
@@ -134,14 +186,14 @@ router.post("/add", (req, res) => {
   var title = req.body.title;
   var content = req.body.content;
   var image = req.body.image;
-  
 
-  console.log("ㄸ호잉또잉", req.body)
+  console.log("ㄸ호잉또잉", req.body);
   async function insertData() {
-    var sqlInsert =  "INSERT INTO homekippa.Post (group_id, user_id, title, content, image, `date`, like_num, comment_num, scope) VALUES (?, ?, ?, ?, ?, ? ,? ,?, ?);";
+    var sqlInsert =
+      "INSERT INTO homekippa.Post (group_id, user_id, title, content, image, `date`, like_num, comment_num, scope) VALUES (?, ?, ?, ?, ?, ? ,? ,?, ?);";
     db.query(
       sqlInsert,
-      [group_id, user_id, title, content, image, new Date(), 0, 0,'ALL' ],
+      [group_id, user_id, title, content, image, new Date(), 0, 0, "ALL"],
       (err, result) => {
         if (err) {
           console.log(err);
@@ -153,7 +205,7 @@ router.post("/add", (req, res) => {
       }
     );
   }
-  insertData()
+  insertData();
   function addNewPost() {
     res.json({
       code: resultCode,
@@ -161,5 +213,4 @@ router.post("/add", (req, res) => {
     });
   }
 });
-
 module.exports = router;
