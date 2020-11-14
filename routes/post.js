@@ -59,8 +59,6 @@ router.get("/location", (req, res) => {
           if (err) {
             console.log(err);
           } else {
-            console.log("in delay");
-            console.log(result);
             resolve(result);
           }
         });
@@ -103,7 +101,6 @@ router.get("/follwer", (req, res) => {
     db.query(sqlSelect, id, (err, result) => {
       if (err) {
         console.log(err);
-        console.log(result);
       } else {
         console.log(result);
         resultCode = 200;
@@ -168,6 +165,120 @@ router.post("/setlike", (req, res) => {
 
   var resultCode = 404;
   var message = "에러 발생";
+});
+
+router.get("/getComment", (req, res) => {
+  var postId = req.query.postId;
+
+  var commentList = [];
+  var userList = [];
+  var groupList = [];
+
+  var resultCode = 404;
+  var message = "에러 발생";
+
+  function getCommentData() {
+    return new Promise(function (resolve, reject) {
+      var sqlSelect = "SELECT * FROM homekippa.Comment WHERE post_id = ?";
+      db.query(sqlSelect, postId, (err, result) => {
+        if (err) {
+          console.log(err);
+        } else {
+          resolve(result);
+        }
+      });
+    });
+  }
+
+  function delay(item, sqlselect, id) {
+    return new Promise(function (resolve, reject) {
+      setTimeout(function () {
+        db.query(sqlselect, id, (err, result) => {
+          if (err) {
+            console.log(err);
+          } else {
+            resolve(result);
+          }
+        });
+      }, 1);
+    });
+  }
+  async function getUserData(list) {
+    var temp_list = [];
+    var sqlSelectUser = "SELECT * FROM homekippa.User WHERE id = ?";
+    for (var i = 0; i < list.length; i++) {
+      var t = await delay(list[i], sqlSelectUser, list[i].user_id);
+      temp_list.push(t[0]);
+    }
+    return temp_list;
+  }
+  async function getGroupData(list) {
+    var temp_list = [];
+    var sqlSelectGroup = "SELECT * FROM homekippa.Group WHERE id = ?";
+    for (var i = 0; i < list.length; i++) {
+      var t = await delay(list[i], sqlSelectGroup, list[i].group_id);
+      temp_list.push(t[0]);
+    }
+    return temp_list;
+  }
+
+  //Execute
+  getCommentData()
+    .then(function (data) {
+      return data;
+    })
+    .then(function (data) {
+      commentList = data;
+      return getUserData(data);
+    })
+    .then(function (data) {
+      userList = data;
+      return getGroupData(data);
+    })
+    .then(function (data) {
+      groupList = data;
+      resultCode = 200;
+      message = "comment Get 성공";
+      console.log(commentList, userList, groupList);
+      res.json({
+        comment: commentList,
+        groups: groupList,
+        users: userList,
+        code: resultCode,
+        message: message,
+      });
+    });
+});
+
+router.post("/setComment", (req, res) => {
+  var postid = req.body.post_id;
+  var userid = req.body.user_id;
+  var content = req.body.content;
+  var date = req.body.date;
+  var resultCode = 404;
+  var message = "에러 발생";
+
+  console.log("Comment postID " + postid);
+
+  var sqlComment =
+    "INSERT INTO homekippa.Comment (post_id, user_id, content, date) VALUES (?, ?, ?, ?);";
+  async function setCommentQuery() {
+    db.query(sqlComment, [postid, userid, content, date], (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        resultCode = 200;
+        message = "comment SET 성공";
+      }
+    });
+  }
+
+  setCommentQuery().then(function () {
+    res.json({
+      code: resultCode,
+      message: message,
+    });
+  });
 });
 
 router.post("/add", (req, res) => {
