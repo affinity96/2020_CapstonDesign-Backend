@@ -166,21 +166,42 @@ router.post(
         if (err) {
           console.log(err);
         } else {
-          resultCode = 200;
-          message = "그룹생성 성공";
+          console.log("응?")
+          updateData(result.insertId);
         }
       });
     }
 
-    checkDuplication().then(function () {
-      console.log(req.file);
-      console.log(req.body);
-      res.json({
-        code: resultCode,
-        message: message,
-      });
+  function updateData(groupId) {
+    var sqlUpdate = "UPDATE homekippa.User SET group_id = ? WHERE id = ?";
+    db.query(sqlUpdate, [groupId, id], (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        resultCode = 200;
+        message = "그룹생성 성공";
+        hello();
+      }
     });
   }
-);
+
+  function hello(){
+    console.log(req.file);
+    console.log(req.body);
+    res.json({
+      code: resultCode,
+      message: message,
+    });
+  }
+  checkDuplication();
+  // checkDuplication().then(function () {
+  //   console.log(req.file);
+  //   console.log(req.body);
+  //   res.json({
+  //     code: resultCode,
+  //     message: message,
+  //   });
+  // });
+});
 
 module.exports = router;
