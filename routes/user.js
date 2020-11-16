@@ -138,4 +138,23 @@ router.get("/list/filter", (req, res) => {
   queryData();
 });
 
+router.get("/getNoti", (req, res) => {
+  var id = req.query.userId;
+
+  async function queryData() {
+    var sqlSelect = "SELECT * FROM Alarm WHERE to_id = ?;";
+    db.query(sqlSelect, id, (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        console.log("result: ", result);
+
+        res.json(result);
+      }
+    });
+  }
+
+  queryData();
+});
+
 module.exports = router;

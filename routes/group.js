@@ -56,6 +56,7 @@ router.get("/", (req, res) => {
 
 router.post("/invite", (req, res) => {
   var from_group = req.body.from_group;
+  var from_user = req.body.from_user;
   var to_user = req.body.to_user;
   var message = "그룹에서 당신을 초대하였습니다."
 
@@ -73,10 +74,11 @@ router.post("/invite", (req, res) => {
         var sql = "INSERT INTO GroupInvite (from_group, to_user) VALUES (?, ?)";
         db.query(sql, [group, user], (err, _) => {
           if (err) {
+            console.log(err);
             res.send({ result: false });
             console.log("초대 전송 실패");
           } else {
-            fcm.sendMessage(from_group, to_user, from_group+message );
+            fcm.sendMessage(from_user, to_user, from_group.name + ' ' +message );
             res.send({ result: true });
             console.log("초대 전송 성공");
           }
@@ -85,7 +87,7 @@ router.post("/invite", (req, res) => {
     });
   }
 
-  insertData(from_group, to_user);
+  insertData(from_group.id, to_user.id);
 });
 
 router.post(
