@@ -85,7 +85,7 @@ router.post("/invite", (req, res) => {
 });
 
 router.post(
-  "/add",
+  "/add/photo",
   multer({
     storage: storage,
   }).single("upload"),
@@ -93,18 +93,14 @@ router.post(
     var id = req.body.userId;
     var name = req.body.groupName;
     var tag = createTag();
-    var image = "";
+    var image = path.join(__dirname, "..", "images/") + req.file.filename;
     var address = req.body.groupAddress;
     // 배경사진 var background = req.body.groupBackground;
     var introduction = req.body.groupIntroduction;
     var resultCode = 404;
     var message = "에러 발생";
 
-    if (req.file) {
-      image = path.join(__dirname, "..", "images/") + req.file.filename;
-    } else {
-      image = path.join(__dirname, "..", "images/") + "profile.png";
-    }
+    image = path.join(__dirname, "..", "images/") + "profile.png";
 
     function createTag() {
       return (randomTag = Math.floor(Math.random() * 10000));
@@ -162,18 +158,105 @@ router.post(
         } else {
           resultCode = 200;
           message = "그룹생성 성공";
+          send();
         }
       });
     }
 
-    checkDuplication().then(function () {
+    function send() {
       console.log(req.file);
       console.log(req.body);
       res.json({
         code: resultCode,
         message: message,
       });
-    });
+    }
+
+    checkDuplication();
+  }
+);
+
+router.post("/add", (req, res) => {
+    var id = req.body.userId;
+    var name = req.body.groupName;
+    var tag = createTag();
+    var image = image = path.join(__dirname, "..", "images/") + "profile.png";
+    var address = req.body.groupAddress;
+    // 배경사진 var background = req.body.groupBackground;
+    var introduction = req.body.groupIntroduction;
+    var resultCode = 404;
+    var message = "에러 발생";
+
+    function createTag() {
+      return (randomTag = Math.floor(Math.random() * 10000));
+    }
+
+    async function checkDuplication() {
+      var checkCode = true;
+
+      while (checkCode) {
+        checkCode = searchTag();
+        if (checkCode) {
+          tag = createTag();
+        } else {
+          insertData();
+        }
+      }
+    }
+
+    function searchTag() {
+      var sqlSelect =
+        "SELECT tag FROM homekippa.Group WHERE name = ? and tag = ?";
+      db.query(sqlSelect, [name, tag], (err, result) => {
+        if (err) {
+          console.log(err);
+          return false;
+        } else if (result[0]) {
+          return true;
+        } else {
+          return false;
+        }
+      });
+    }
+
+    function insertData() {
+      var sqlInsert =
+        "INSERT INTO homekippa.Group (name, tag, image, address, introduction) VALUES (?, ?, ?, ?, ?)";
+      db.query(
+        sqlInsert,
+        [name, tag, image, address, introduction],
+        (err, result) => {
+          if (err) {
+            console.log(err);
+          } else {
+            updateData(result.insertId);
+          }
+        }
+      );
+    }
+
+    function updateData(groupId) {
+      var sqlUpdate = "UPDATE homekippa.User SET group_id = ? WHERE id = ?";
+      db.query(sqlUpdate, [groupId, id], (err, result) => {
+        if (err) {
+          console.log(err);
+        } else {
+          resultCode = 200;
+          message = "그룹생성 성공";
+          send();
+        }
+      });
+    }
+
+    function send() {
+      console.log(req.body);
+      res.json({
+        code: resultCode,
+        message: message,
+      });
+    }
+
+    checkDuplication();
   }
 );
 
