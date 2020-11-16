@@ -209,6 +209,40 @@ router.post("/add/des", (req, res) => {
   }
 });
 
+router.get("/reports", (req, res) => {
+  var reportList = [];
+  var resultCode = 404;
+  var message = "에러 발생";
+  var pet_id = req.query.petId;
+  console.log("잉?", req.query);
+  function getDailyWorkData() {
+    return new Promise(function (resolve, reject) {
+      var sqlSelect = "SELECT * FROM homekippa.Report WHERE pet_id = ?";
+      db.query(sqlSelect,  pet_id, (err, result) => {
+        
+        if (err) {
+          console.log(err);
+        } else {
+          console.log("ㅣㄹ절트", result);
+          resolve(result);
+        }
+      });
+    });
+  }
+
+
+  //Execute
+  getDailyWorkData()
+    .then(function (data) {
+      return data;
+    })
+    .then(function (data) {
+      reportList = data;
+      console.log("잉", reportList);
+      res.json( reportList );
+    });
+})
+
 router.post("/reports/add", (req, res) => {
 
   var group_id = req.body.GroupId;

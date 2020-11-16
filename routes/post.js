@@ -81,6 +81,7 @@ router.get("/location", (req, res) => {
     })
     .then(function (data) {
       postList = data;
+      console.log("po", postList);
       groupList = getGroupData(data);
 
       return groupList;
