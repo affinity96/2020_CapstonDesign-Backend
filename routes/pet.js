@@ -178,7 +178,7 @@ router.post(
   storage: storage,
   }).single("upload"), (req, res) => {
 
-  var id = req.body.groupId;
+  var group_id = req.body.GroupId;
   var name = req.body.petName;
   var birth = req.body.petBirth; //
   var image = path.join(__dirname, "..", "images/") + req.file.filename;
@@ -189,12 +189,28 @@ router.post(
   var resultCode = 404;
   var message = "에러 발생";
 
+  if(neutrality == '중성'){
+    console.log("here");
+    neutrality = 1;
+  }else{
+    console.log("here2");
+    neutrality = 0;
+  }
+
+  if(gender == '수컷'){
+    console.log("here3");
+    gender = 1;
+  }else{
+    console.log("here4");
+    gender =0;
+  }
+
   async function insertData(){
     var sqlInsert =
-      "INSERT INTO homekippa.Pet (id, name, birth, image, species, reg_num, gender, neutrality) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+      "INSERT INTO homekippa.Pet (group_id, name, birth, image, species, reg_num, gender, neutrality) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
     db.query(
       sqlInsert,
-      [id, name, birth, image, species, reg_num, gender, neutrality],
+      [group_id, name, birth, image, species, reg_num, gender, neutrality],
       (err, result) => {
         if (err) {
           console.log(err);
@@ -224,13 +240,8 @@ router.post("/add/des", (req, res) => {
 
   var group_id = req.body.GroupId;
   var name = req.body.petName;
-<<<<<<< HEAD
   var birth = req.body.petBirth; //
   var image = path.join(__dirname, "..", "images/") + "profile.png";
-=======
-  var birth = req.body.petBirth;
-  // 이미지 var image = req.body.petImage;
->>>>>>> e3a4a774a8b518999468fc1193bc243ebdfecb56
   var species = req.body.petSpecies; // 종
   var reg_num = req.body.petRegNum; // 등록번호
   var gender = req.body.petGender; // 성
@@ -256,17 +267,10 @@ router.post("/add/des", (req, res) => {
 
   async function insertData(){
     var sqlInsert =
-<<<<<<< HEAD
-      "INSERT INTO homekippa.Pet (id, name, birth, image, species, reg_num, gender, neutrality) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+      "INSERT INTO homekippa.Pet (group_id, name, birth, image, species, reg_num, gender, neutrality) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
     db.query(
       sqlInsert,
-      [id, name, birth, image, species, reg_num, gender, neutrality],
-=======
-      "INSERT INTO homekippa.Pet (group_id, name, birth, species, reg_num, gender, neutrality) VALUES (?, ?, ?, ?, ?, ?, ?)";
-    db.query(
-      sqlInsert,
-      [group_id, name, birth, species, reg_num, gender, neutrality],
->>>>>>> e3a4a774a8b518999468fc1193bc243ebdfecb56
+      [group_id, name, birth, image, species, reg_num, gender, neutrality],
       (err, result) => {
         if (err) {
           console.log(err);

@@ -250,19 +250,13 @@ router.post("/add", (req, res) => {
         if (err) {
           console.log(err);
         } else {
-<<<<<<< HEAD
           resultCode = 200;
           message = "그룹생성 성공";
           send();
-=======
-          console.log("응?")
-          updateData(result.insertId);
->>>>>>> e3a4a774a8b518999468fc1193bc243ebdfecb56
         }
       });
     }
 
-<<<<<<< HEAD
     function send() {
       console.log(req.body);
       res.json({
@@ -272,38 +266,7 @@ router.post("/add", (req, res) => {
     }
 
     checkDuplication();
-=======
-  function updateData(groupId) {
-    var sqlUpdate = "UPDATE homekippa.User SET group_id = ? WHERE id = ?";
-    db.query(sqlUpdate, [groupId, id], (err, result) => {
-      if (err) {
-        console.log(err);
-      } else {
-        resultCode = 200;
-        message = "그룹생성 성공";
-        hello();
-      }
-    });
->>>>>>> e3a4a774a8b518999468fc1193bc243ebdfecb56
-  }
-
-  function hello(){
-    console.log(req.file);
-    console.log(req.body);
-    res.json({
-      code: resultCode,
-      message: message,
-    });
-  }
-  checkDuplication();
-  // checkDuplication().then(function () {
-  //   console.log(req.file);
-  //   console.log(req.body);
-  //   res.json({
-  //     code: resultCode,
-  //     message: message,
-  //   });
-  // });
+  
 });
 
 module.exports = router;
