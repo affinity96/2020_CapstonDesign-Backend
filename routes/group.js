@@ -1,3 +1,4 @@
+var fcm = require("../functions/firebase");
 var express = require("express");
 var router = express.Router();
 var path = require("path");
@@ -5,6 +6,7 @@ var path = require("path");
 const mysql = require("mysql");
 const dbconfig = require("../config/database.js");
 const db = mysql.createConnection(dbconfig);
+
 
 const multer = require("multer");
 
@@ -55,6 +57,7 @@ router.get("/", (req, res) => {
 router.post("/invite", (req, res) => {
   var from_group = req.body.from_group;
   var to_user = req.body.to_user;
+  var message = "그룹에서 당신을 초대하였습니다."
 
   async function insertData(group, user) {
     var checksql =
@@ -73,6 +76,7 @@ router.post("/invite", (req, res) => {
             res.send({ result: false });
             console.log("초대 전송 실패");
           } else {
+            fcm.sendMessage(from_group, to_user, from_group+message );
             res.send({ result: true });
             console.log("초대 전송 성공");
           }

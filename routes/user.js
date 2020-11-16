@@ -7,6 +7,7 @@ const db = mysql.createConnection(dbconfig);
 
 router.get("/", (req, res) => {
   var id = req.query.userId;
+  var token = req.query.token;
   var name = "";
   var group_id = "";
   var image = "";
@@ -17,31 +18,39 @@ router.get("/", (req, res) => {
   var message = "에러 발생";
 
   async function queryData() {
+    var sqlUpdate = "UPDATE homekippa.User SET token = ? WHERE id = ?";
     var sqlSelect = "SELECT * FROM homekippa.User WHERE id = ?";
-    db.query(sqlSelect, id, (err, result) => {
-      if (err) {
+
+    db.query(sqlUpdate, [token, id], (err, result) => {
+      if(err){
         console.log(err);
       } else {
-        // console.log(result[0]);
-        resultCode = 200;
-        message = "유저정보 GET 성공";
-        name = result[0].name;
-        group_id = result[0].group_id;
-        image = result[0].image;
-        birth = result[0].birth;
-        phone = result[0].phone;
-        email = result[0].email;
-
-        res.json({
-          code: resultCode,
-          message: message,
-          name,
-          id,
-          group_id,
-          image,
-          birth,
-          phone,
-          email,
+        db.query(sqlSelect, id, (err, result) => {
+          if (err) {
+            console.log(err);
+          } else {
+            // console.log(result[0]);
+            resultCode = 200;
+            message = "유저정보 GET 성공";
+            name = result[0].name;
+            group_id = result[0].group_id;
+            image = result[0].image;
+            birth = result[0].birth;
+            phone = result[0].phone;
+            email = result[0].email;
+    
+            res.json({
+              code: resultCode,
+              message: message,
+              name,
+              id,
+              group_id,
+              image,
+              birth,
+              phone,
+              email,
+            });
+          }
         });
       }
     });
