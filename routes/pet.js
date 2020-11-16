@@ -21,6 +21,11 @@ const mysql = require("mysql");
 const dbconfig = require("../config/database.js");
 const db = mysql.createConnection(dbconfig);
 
+var path = require("path");
+const multer = require("multer");
+const multerconfig = require("../config/multer.js");
+storage = multer.diskStorage(multerconfig);
+
 router.get("/", (req, res) => {
   var id = req.query.groupId;
   var resultCode = 404;

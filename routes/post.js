@@ -6,6 +6,11 @@ const dbconfig = require("../config/database.js");
 const { post } = require("request");
 const db = mysql.createConnection(dbconfig);
 
+var path = require("path");
+const multer = require("multer");
+const multerconfig = require("../config/multer.js");
+storage = multer.diskStorage(multerconfig);
+
 router.get("/group", (req, res) => {
   var id = req.query.groupId;
   var resultCode = 404;
@@ -291,8 +296,8 @@ router.post(
   var resultCode = 404;
   var message = "에러 발생";
 
-  var group_id = req.body.GroupId;
-  var user_id = req.body.UserId;
+  var group_id = req.body.groupId;
+  var user_id = req.body.userId;
   var title = req.body.title;
   var content = req.body.content;
   var image = path.join(__dirname, "..", "images/") + req.file.filename;

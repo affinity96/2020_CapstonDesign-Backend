@@ -7,15 +7,8 @@ const dbconfig = require("../config/database.js");
 const db = mysql.createConnection(dbconfig);
 
 const multer = require("multer");
-
-storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "./images/");
-  },
-  filename: function (req, file, cb) {
-    cb(null, new Date().valueOf() + path.extname(file.originalname));
-  },
-});
+const multerconfig = require("../config/multer.js");
+storage = multer.diskStorage(multerconfig);
 
 router.get("/", (req, res) => {
   var id = req.query.groupId;
@@ -84,6 +77,24 @@ router.post("/invite", (req, res) => {
   insertData(from_group, to_user);
 });
 
+router.get("/image", (req, res) => {
+  console.log(req.path);
+  var filePath = req.path;
+
+  fs.readFile(filePath, (err, data) => {	
+      if(err){
+        console.log(err);
+        res.end(null);
+      } else {
+      console.log(filePath);
+      console.log(data);
+      res.end(data);
+      }
+    }
+  );
+
+});
+
 router.post(
   "/add/photo",
   multer({
@@ -99,8 +110,6 @@ router.post(
     var introduction = req.body.groupIntroduction;
     var resultCode = 404;
     var message = "에러 발생";
-
-    image = path.join(__dirname, "..", "images/") + "profile.png";
 
     function createTag() {
       return (randomTag = Math.floor(Math.random() * 10000));
@@ -180,7 +189,7 @@ router.post("/add", (req, res) => {
     var id = req.body.userId;
     var name = req.body.groupName;
     var tag = createTag();
-    var image = image = path.join(__dirname, "..", "images/") + "profile.png";
+    var image = path.join(__dirname, "..", "images/") + "profile.png";
     var address = req.body.groupAddress;
     // 배경사진 var background = req.body.groupBackground;
     var introduction = req.body.groupIntroduction;
