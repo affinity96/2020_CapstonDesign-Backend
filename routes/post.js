@@ -281,7 +281,12 @@ router.post("/setComment", (req, res) => {
   });
 });
 
-router.post("/add", (req, res) => {
+router.post(
+  "/add/photo", 
+  multer({
+  storage: storage,
+  }).single("upload"),
+  (req, res) => {
   var id = req.query.groupId;
   var resultCode = 404;
   var message = "에러 발생";
@@ -290,7 +295,7 @@ router.post("/add", (req, res) => {
   var user_id = req.body.UserId;
   var title = req.body.title;
   var content = req.body.content;
-  var image = req.body.image;
+  var image = path.join(__dirname, "..", "images/") + req.file.filename;
 
   console.log("ㄸ호잉또잉", req.body);
   async function insertData() {
@@ -318,4 +323,43 @@ router.post("/add", (req, res) => {
     });
   }
 });
+
+router.post("/add", (req, res) => {
+  var id = req.query.groupId;
+  var resultCode = 404;
+  var message = "에러 발생";
+
+  var group_id = req.body.GroupId;
+  var user_id = req.body.UserId;
+  var title = req.body.title;
+  var content = req.body.content;
+  var image = path.join(__dirname, "..", "images/") + "profile.png";
+
+  console.log("ㄸ호잉또잉", req.body);
+  async function insertData() {
+    var sqlInsert =
+      "INSERT INTO homekippa.Post (group_id, user_id, title, content, image, `date`, like_num, comment_num, scope) VALUES (?, ?, ?, ?, ?, ? ,? ,?, ?);";
+    db.query(
+      sqlInsert,
+      [group_id, user_id, title, content, image, new Date(), 0, 0, "ALL"],
+      (err, result) => {
+        if (err) {
+          console.log(err);
+        } else {
+          resultCode = 200;
+          message = "게시글추가성공";
+          addNewPost();
+        }
+      }
+    );
+  }
+  insertData();
+  function addNewPost() {
+    res.json({
+      code: resultCode,
+      message: message,
+    });
+  }
+});
+
 module.exports = router;
