@@ -1,7 +1,5 @@
 const express = require("express");
 
-var admin = require("firebase-admin");
-var serviceAccount = require("./path/to/homekippa-c2f26-firebase-adminsdk-ffxqb-629c2e2eec.json");
 const AWS = require("aws-sdk");
 
 var axios = require("axios");
@@ -89,28 +87,6 @@ function handleDisconnect() {
 // });
 // 일단 주석
 // handleDisconnect();
-
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-  databaseURL: "https://homekippa-c2f26.firebaseio.com",
-});
-
-app.post("/uid", (req, res) => {
-  var uid = req.body.uid;
-  // console.log("uid" + uid);
-  admin
-    .auth()
-    .getUser(uid)
-
-    .then(function () {
-      res.send(200, { result: true });
-      console.log(true);
-    })
-    .catch(function (error) {
-      res.send(200, { result: false });
-      console.log(false);
-    });
-});
 
 app.listen(PORT, () => {
   console.log("Server is running at:", PORT);
