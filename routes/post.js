@@ -35,6 +35,7 @@ router.get("/group", (req, res) => {
 router.get("/location", (req, res) => {
   var postList = [];
   var groupList = [];
+  var likeList = [];
   var resultCode = 404;
   var message = "에러 발생";
 
@@ -51,11 +52,10 @@ router.get("/location", (req, res) => {
     });
   }
 
-  function delay(item) {
+  function delay(item, sql, id) {
     return new Promise(function (resolve, reject) {
       setTimeout(function () {
-        var sqlSelect1 = "SELECT * FROM homekippa.Group WHERE id = ?";
-        db.query(sqlSelect1, item.group_id, (err, result) => {
+        db.query(sql, id, (err, result) => {
           if (err) {
             console.log(err);
           } else {
@@ -67,9 +67,20 @@ router.get("/location", (req, res) => {
   }
   async function getGroupData(list) {
     var temp_list = [];
+    var sql = "SELECT * FROM homekippa.Group WHERE id = ? ";
     for (var i = 0; i < list.length; i++) {
-      var t = await delay(list[i]);
+      var t = await delay(list[i], sql, list[i].group_id);
       temp_list.push(t[0]);
+    }
+    return temp_list;
+  }
+
+  async function getLikeData(list) {
+    var temp_list = [];
+    var sql = "SELECT * FROM homekippa.Like WHERE post_id = ? ";
+    for (var i = 0; i < list.length; i++) {
+      var t = await delay(list[i], sql, list[i].id);
+      temp_list.push(t);
     }
     return temp_list;
   }
@@ -81,13 +92,27 @@ router.get("/location", (req, res) => {
     })
     .then(function (data) {
       postList = data;
-      groupList = getGroupData(data);
-
+      groupList = getGroupData(postList);
       return groupList;
     })
     .then(function (data) {
       groupList = data;
-      res.json({ groupData: groupList, postData: postList });
+      likeList = getLikeData(postList);
+      return likeList;
+    })
+    .then(function (data) {
+      likeList = data;
+      console.log("LIKEDATA");
+      console.log(likeList);
+      resultCode = 200;
+      message = "data get 성공";
+      res.json({
+        groupData: groupList,
+        postData: postList,
+        likeData: likeList,
+        code: resultCode,
+        message: message,
+      });
     });
 });
 
@@ -273,6 +298,67 @@ router.post("/setComment", (req, res) => {
     });
   }
 
+  function setCommentNum() {
+    return new Promise(function (resolve, reject) {
+      var sqlCommentNum =
+        "UPDATE homekippa.Post SET comment_num=comment_num + 1  WHERE id = ?;";
+      db.query(sqlCommentNum, postid, (err, result) => {
+        if (err) {
+          console.log(err);
+        } else {
+          resultCode = 200;
+          message = "comment SET 성공";
+          resolve(resultCode);
+        }
+      });
+    });
+  }
+
+  setCommentQuery()
+    .then(function () {})
+    .then(function () {
+      return setCommentNum();
+    })
+    .then(function (data) {
+      res.json({
+        code: data,
+        message: message,
+      });
+    });
+});
+
+router.get("/deleteComment", (req, res) => {
+  var commentid = req.query.commentId;
+
+  var resultCode = 404;
+  var message = "에러 발생";
+
+  var sqlDeleteComment = "DELETE FROM homekippa.Comment WHERE id = ? ";
+  async function setCommentQuery() {
+    db.query(sqlDeleteComment, commentid, (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        setCommentNum();
+        resultCode = 200;
+        message = "comment SET 성공";
+      }
+    });
+  }
+
+  var sqlCommentNum =
+    "UPDATE homekippa.Post SET comment_num=comment_num - 1  WHERE id = ?;";
+  async function setCommentNum() {
+    db.query(sqlCommentNum, postid, (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        resultCode = 200;
+        message = "comment SET 성공";
+      }
+    });
+  }
+
   setCommentQuery().then(function () {
     res.json({
       code: resultCode,
@@ -318,4 +404,5 @@ router.post("/add", (req, res) => {
     });
   }
 });
+
 module.exports = router;
