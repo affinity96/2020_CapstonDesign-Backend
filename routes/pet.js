@@ -21,6 +21,11 @@ const mysql = require("mysql");
 const dbconfig = require("../config/database.js");
 const db = mysql.createConnection(dbconfig);
 
+var path = require("path");
+const multer = require("multer");
+const multerconfig = require("../config/multer.js");
+storage = multer.diskStorage(multerconfig);
+
 router.get("/", (req, res) => {
   var id = req.query.groupId;
   var resultCode = 404;
@@ -167,12 +172,16 @@ router.post("/add", (req, res) => {
     });
 });
 
-router.post("/add/des", (req, res) => {
+router.post(
+  "/add/des/photo",
+  multer({
+  storage: storage,
+  }).single("upload"), (req, res) => {
 
-  var id = req.body.groupId;
+  var group_id = req.body.GroupId;
   var name = req.body.petName;
   var birth = req.body.petBirth; //
-  // 이미지 var image = req.body.petImage;
+  var image = path.join(__dirname, "..", "images/") + req.file.filename;
   var species = req.body.petSpecies; // 종
   var reg_num = req.body.petRegNum; // 등록번호
   var gender = req.body.petGender; // 성
@@ -180,12 +189,88 @@ router.post("/add/des", (req, res) => {
   var resultCode = 404;
   var message = "에러 발생";
 
+  if(neutrality == '중성'){
+    console.log("here");
+    neutrality = 1;
+  }else{
+    console.log("here2");
+    neutrality = 0;
+  }
+
+  if(gender == '수컷'){
+    console.log("here3");
+    gender = 1;
+  }else{
+    console.log("here4");
+    gender =0;
+  }
+
   async function insertData(){
     var sqlInsert =
-      "INSERT INTO homekippa.Pet (id, name, birth, species, reg_num, gender, neutrality) VALUES (?, ?, ?, ?, ?, ?, ?)";
+      "INSERT INTO homekippa.Pet (group_id, name, birth, image, species, reg_num, gender, neutrality) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
     db.query(
       sqlInsert,
-      [id, name, birth, species, reg_num, gender, neutrality],
+      [group_id, name, birth, image, species, reg_num, gender, neutrality],
+      (err, result) => {
+        if (err) {
+          console.log(err);
+        } else {
+          resultCode = 200;
+          message = "펫생성 성공";
+          addNewPet();
+        }
+      }
+    );
+  }
+
+  insertData();
+  function addNewPet()
+  {
+    console.log(req.file);
+    console.log(req.body);
+    res.json({
+      code: resultCode,
+      message: message,
+    });
+  }
+});
+
+router.post("/add/des", (req, res) => {
+  console.log(req.body);
+
+  var group_id = req.body.GroupId;
+  var name = req.body.petName;
+  var birth = req.body.petBirth; //
+  var image = path.join(__dirname, "..", "images/") + "profile.png";
+  var species = req.body.petSpecies; // 종
+  var reg_num = req.body.petRegNum; // 등록번호
+  var gender = req.body.petGender; // 성
+  var neutrality = req.body.petNeutralization; // 중성
+  var resultCode = 404;
+  var message = "에러 발생";
+
+  if(neutrality == '중성'){
+    console.log("here");
+    neutrality = 1;
+  }else{
+    console.log("here2");
+    neutrality = 0;
+  }
+
+  if(gender == '수컷'){
+    console.log("here3");
+    gender = 1;
+  }else{
+    console.log("here4");
+    gender =0;
+  }
+
+  async function insertData(){
+    var sqlInsert =
+      "INSERT INTO homekippa.Pet (group_id, name, birth, image, species, reg_num, gender, neutrality) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+    db.query(
+      sqlInsert,
+      [group_id, name, birth, image, species, reg_num, gender, neutrality],
       (err, result) => {
         if (err) {
           console.log(err);
@@ -208,6 +293,40 @@ router.post("/add/des", (req, res) => {
     });
   }
 });
+
+router.get("/reports", (req, res) => {
+  var reportList = [];
+  var resultCode = 404;
+  var message = "에러 발생";
+  var pet_id = req.query.petId;
+  console.log("잉?", req.query);
+  function getDailyWorkData() {
+    return new Promise(function (resolve, reject) {
+      var sqlSelect = "SELECT * FROM homekippa.Report WHERE pet_id = ?";
+      db.query(sqlSelect,  pet_id, (err, result) => {
+
+        if (err) {
+          console.log(err);
+        } else {
+          console.log("ㅣㄹ절트", result);
+          resolve(result);
+        }
+      });
+    });
+  }
+
+
+  //Execute
+  getDailyWorkData()
+    .then(function (data) {
+      return data;
+    })
+    .then(function (data) {
+      reportList = data;
+      console.log("잉", reportList);
+      res.json( reportList );
+    });
+})
 
 router.post("/reports/add", (req, res) => {
 
