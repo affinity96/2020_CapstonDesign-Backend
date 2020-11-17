@@ -13,41 +13,81 @@ storage = multer.diskStorage(multerconfig);
 
 router.get("/group", (req, res) => {
   var id = req.query.groupId;
+  var postList = [];
+  var likeList = [];
   var resultCode = 404;
   var message = "에러 발생";
 
-  async function queryData() {
+  function queryData() {
     var sqlSelect = "SELECT * FROM homekippa.Post WHERE group_id = ?";
-    db.query(sqlSelect, id, (err, result) => {
-      if (err) {
-        console.log(err);
-        console.log(result);
-      } else {
-        // console.log(result);
-        resultCode = 200;
-        message = "그룹 게시글 GET 성공";
-
-        res.json(result);
-      }
+    return new Promise(function (resolve, reject) {
+      db.query(sqlSelect, id, (err, result) => {
+        if (err) {
+          console.log(err);
+        } else {
+          resolve(result);
+        }
+      });
     });
   }
 
-  queryData().then(function () {
-    // console.log(id);
-  });
+  function delay(item, sql, id) {
+    return new Promise(function (resolve, reject) {
+      setTimeout(function () {
+        db.query(sql, id, (err, result) => {
+          if (err) {
+            console.log(err);
+          } else {
+            resolve(result);
+          }
+        });
+      }, 1);
+    });
+  }
+  async function getLikeData(list) {
+    var temp_list = [];
+
+    var sql = "SELECT * FROM homekippa.Like WHERE post_id = ? ";
+    for (var i = 0; i < list.length; i++) {
+      var t = await delay(list[i], sql, list[i].id);
+      temp_list.push(t);
+    }
+    return temp_list;
+  }
+
+  queryData()
+    .then(function (data) {
+      postList = data;
+      return data;
+    })
+    .then(function (data) {
+      postList = data;
+      console.log("group postlist");
+      console.log(postList);
+      likeList = getLikeData(data);
+      return likeList;
+    })
+    .then(function (data) {
+      likeList = data;
+      console.log("group likeList");
+      console.log(likeList);
+      resultCode = 200;
+      message = "그룹 게시글 GET 성공";
+      res.json({ likeData: likeList, postData: postList });
+    });
 });
 
-router.get("/location", (req, res) => {
+router.get("/home", (req, res) => {
+  var tab = req.query.tab_;
   var postList = [];
   var groupList = [];
   var likeList = [];
   var resultCode = 404;
   var message = "에러 발생";
 
-  function getPostData() {
+  function getPostData(sql) {
     return new Promise(function (resolve, reject) {
-      var sqlSelect = "SELECT * FROM homekippa.Post";
-      db.query(sqlSelect, (err, result) => {
+      db.query(sql, (err, result) => {
         if (err) {
           console.log(err);
         } else {
@@ -89,18 +129,19 @@ router.get("/location", (req, res) => {
     }
     return temp_list;
   }
+  if ((tab_ = "F")) var sqlPost = "SELECT * FROM homekippa.Post";
+  else {
+    var sqlPost = "SELECT * FROM homekippa.Post";
+  }
 
   //Execute
-  getPostData()
+  getPostData(sqlPost)
     .then(function (data) {
       return data;
     })
     .then(function (data) {
       postList = data;
-
-      console.log("po", postList);
       groupList = getGroupData(data);
-
       return groupList;
     })
     .then(function (data) {
@@ -122,30 +163,6 @@ router.get("/location", (req, res) => {
         message: message,
       });
     });
-});
-
-router.get("/follwer", (req, res) => {
-  var id = req.query.groupId;
-  var resultCode = 404;
-  var message = "에러 발생";
-
-  async function queryData() {
-    var sqlSelect = "SELECT * FROM homekippa.Post WHERE group_id = ?";
-    db.query(sqlSelect, id, (err, result) => {
-      if (err) {
-        console.log(err);
-      } else {
-        console.log(result);
-        resultCode = 200;
-        message = "그룹 게시글 GET 성공";
-
-        res.json(result);
-      }
-    });
-  }
-  queryData().then(function () {
-    console.log(id);
-  });
 });
 
 router.post("/setlike", (req, res) => {
@@ -198,181 +215,6 @@ router.post("/setlike", (req, res) => {
 
   var resultCode = 404;
   var message = "에러 발생";
-});
-
-router.get("/getComment", (req, res) => {
-  var postId = req.query.postId;
-
-  var commentList = [];
-  var userList = [];
-  var groupList = [];
-
-  var resultCode = 404;
-  var message = "에러 발생";
-
-  function getCommentData() {
-    return new Promise(function (resolve, reject) {
-      var sqlSelect = "SELECT * FROM homekippa.Comment WHERE post_id = ?";
-      db.query(sqlSelect, postId, (err, result) => {
-        if (err) {
-          console.log(err);
-        } else {
-          resolve(result);
-        }
-      });
-    });
-  }
-
-  function delay(item, sqlselect, id) {
-    return new Promise(function (resolve, reject) {
-      setTimeout(function () {
-        db.query(sqlselect, id, (err, result) => {
-          if (err) {
-            console.log(err);
-          } else {
-            resolve(result);
-          }
-        });
-      }, 1);
-    });
-  }
-  async function getUserData(list) {
-    var temp_list = [];
-    var sqlSelectUser = "SELECT * FROM homekippa.User WHERE id = ?";
-    for (var i = 0; i < list.length; i++) {
-      var t = await delay(list[i], sqlSelectUser, list[i].user_id);
-      temp_list.push(t[0]);
-    }
-    return temp_list;
-  }
-  async function getGroupData(list) {
-    var temp_list = [];
-    var sqlSelectGroup = "SELECT * FROM homekippa.Group WHERE id = ?";
-    for (var i = 0; i < list.length; i++) {
-      var t = await delay(list[i], sqlSelectGroup, list[i].group_id);
-      temp_list.push(t[0]);
-    }
-    return temp_list;
-  }
-
-  //Execute
-  getCommentData()
-    .then(function (data) {
-      return data;
-    })
-    .then(function (data) {
-      commentList = data;
-      return getUserData(data);
-    })
-    .then(function (data) {
-      userList = data;
-      return getGroupData(data);
-    })
-    .then(function (data) {
-      groupList = data;
-      resultCode = 200;
-      message = "comment Get 성공";
-      console.log(commentList, userList, groupList);
-      res.json({
-        comment: commentList,
-        groups: groupList,
-        users: userList,
-        code: resultCode,
-        message: message,
-      });
-    });
-});
-
-router.post("/setComment", (req, res) => {
-  var postid = req.body.post_id;
-  var userid = req.body.user_id;
-  var content = req.body.content;
-  var date = req.body.date;
-  var resultCode = 404;
-  var message = "에러 발생";
-
-  console.log("Comment postID " + postid);
-
-  var sqlComment =
-    "INSERT INTO homekippa.Comment (post_id, user_id, content, date) VALUES (?, ?, ?, ?);";
-  async function setCommentQuery() {
-    db.query(sqlComment, [postid, userid, content, date], (err, result) => {
-      if (err) {
-        console.log(err);
-      } else {
-        resultCode = 200;
-        message = "comment SET 성공";
-      }
-    });
-  }
-
-  function setCommentNum() {
-    return new Promise(function (resolve, reject) {
-      var sqlCommentNum =
-        "UPDATE homekippa.Post SET comment_num=comment_num + 1  WHERE id = ?;";
-      db.query(sqlCommentNum, postid, (err, result) => {
-        if (err) {
-          console.log(err);
-        } else {
-          resultCode = 200;
-          message = "comment SET 성공";
-          resolve(resultCode);
-        }
-      });
-    });
-  }
-
-  setCommentQuery()
-    .then(function () {})
-    .then(function () {
-      return setCommentNum();
-    })
-    .then(function (data) {
-      res.json({
-        code: data,
-        message: message,
-      });
-    });
-});
-
-router.get("/deleteComment", (req, res) => {
-  var commentid = req.query.commentId;
-
-  var resultCode = 404;
-  var message = "에러 발생";
-
-  var sqlDeleteComment = "DELETE FROM homekippa.Comment WHERE id = ? ";
-  async function setCommentQuery() {
-    db.query(sqlDeleteComment, commentid, (err, result) => {
-      if (err) {
-        console.log(err);
-      } else {
-        setCommentNum();
-        resultCode = 200;
-        message = "comment SET 성공";
-      }
-    });
-  }
-
-  var sqlCommentNum =
-    "UPDATE homekippa.Post SET comment_num=comment_num - 1  WHERE id = ?;";
-  async function setCommentNum() {
-    db.query(sqlCommentNum, postid, (err, result) => {
-      if (err) {
-        console.log(err);
-      } else {
-        resultCode = 200;
-        message = "comment SET 성공";
-      }
-    });
-  }
-
-  setCommentQuery().then(function () {
-    res.json({
-      code: resultCode,
-      message: message,
-    });
-  });
 });
 
 router.post(
