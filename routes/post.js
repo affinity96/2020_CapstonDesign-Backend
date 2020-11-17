@@ -13,7 +13,6 @@ storage = multer.diskStorage(multerconfig);
 
 router.get("/group", (req, res) => {
   var id = req.query.groupId;
-  console.log("groupid" + id);
   var postList = [];
   var likeList = [];
   var resultCode = 404;
