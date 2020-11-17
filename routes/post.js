@@ -141,8 +141,8 @@ router.get("/follwer", (req, res) => {
 });
 
 router.post("/setlike", (req, res) => {
-  var postid = req.body.PostId;
-  var userid = req.body.UserId;
+  var postid = req.body.post_id;
+  var userid = req.body.user_id;
   var isliked = req.body.isLiked;
 
   console.log("postid" + postid);
