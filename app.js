@@ -17,6 +17,7 @@ const userRouter = require("./routes/user");
 const groupRouter = require("./routes/group");
 const petRouter = require("./routes/pet");
 const postRouter = require("./routes/post");
+const commentRouter = require("./routes/comment");
 //const firebaseRouter = require("./routes/firebase");
 
 app.use(express.static("public"));
@@ -27,6 +28,7 @@ app.use("/user", userRouter);
 app.use("/group", groupRouter);
 app.use("/pet", petRouter);
 app.use("/post", postRouter);
+app.use("/comment", commentRouter);
 //app.use("/firebase", firebaseRouter);
 
 function handleDisconnect() {
