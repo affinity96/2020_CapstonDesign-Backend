@@ -1,7 +1,5 @@
 const express = require("express");
 
-var admin = require("firebase-admin");
-var serviceAccount = require("./path/to/homekippa-c2f26-firebase-adminsdk-ffxqb-629c2e2eec.json");
 const AWS = require("aws-sdk");
 
 var axios = require("axios");
@@ -19,6 +17,7 @@ const userRouter = require("./routes/user");
 const groupRouter = require("./routes/group");
 const petRouter = require("./routes/pet");
 const postRouter = require("./routes/post");
+const commentRouter = require("./routes/comment");
 //const firebaseRouter = require("./routes/firebase");
 
 app.use(express.static("public"));
@@ -29,6 +28,7 @@ app.use("/user", userRouter);
 app.use("/group", groupRouter);
 app.use("/pet", petRouter);
 app.use("/post", postRouter);
+app.use("/comment", commentRouter);
 //app.use("/firebase", firebaseRouter);
 
 function handleDisconnect() {
@@ -87,28 +87,6 @@ function handleDisconnect() {
 // });
 // 일단 주석
 // handleDisconnect();
-
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-  databaseURL: "https://homekippa-c2f26.firebaseio.com",
-});
-
-app.post("/uid", (req, res) => {
-  var uid = req.body.uid;
-  // console.log("uid" + uid);
-  admin
-    .auth()
-    .getUser(uid)
-
-    .then(function () {
-      res.send(200, { result: true });
-      console.log(true);
-    })
-    .catch(function (error) {
-      res.send(200, { result: false });
-      console.log(false);
-    });
-});
 
 app.listen(PORT, () => {
   console.log("Server is running at:", PORT);
