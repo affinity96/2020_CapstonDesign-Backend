@@ -1,6 +1,7 @@
 var express = require("express");
 var router = express.Router();
 var path = require("path");
+var fs = require("fs");
 
 const mysql = require("mysql");
 const dbconfig = require("../config/database.js");
@@ -78,8 +79,8 @@ router.post("/invite", (req, res) => {
 });
 
 router.get("/image", (req, res) => {
-  console.log(req.path);
-  var filePath = req.path;
+  console.log(req.query.apiName);
+  var filePath = req.query.apiName;
 
   fs.readFile(filePath, (err, data) => {	
       if(err){
