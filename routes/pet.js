@@ -302,7 +302,7 @@ router.get("/reports", (req, res) => {
   console.log("잉?", req.query);
   function getDailyWorkData() {
     return new Promise(function (resolve, reject) {
-      var sqlSelect = "SELECT * FROM homekippa.Report WHERE pet_id = ?";
+      var sqlSelect = "SELECT * FROM homekippa.Report WHERE pet_id = ? ORDER BY time ASC";
       db.query(sqlSelect,  pet_id, (err, result) => {
 
         if (err) {
@@ -333,7 +333,7 @@ router.post("/reports/add", (req, res) => {
   var group_id = req.body.GroupId;
   var pet_id = req.body.PetId;
   var title = req.body.dailyWorkName;
-
+  var done = false;
   var alarm = req.body.dailyWorkAlarm;
   var desc = req.body.dailyWorkDesc;
   var time = req.body.dailyWorkTime;
@@ -342,10 +342,10 @@ router.post("/reports/add", (req, res) => {
 
   async function insertData() {
     var sqlInsert =
-      "INSERT INTO homekippa.Report (group_id, pet_id, title, alarm, `desc`, `time`) VALUES (?, ?, ?, ?, ?, ?);";
+      "INSERT INTO homekippa.Report (group_id, pet_id, title, alarm, `desc`, `time`, done) VALUES (?, ?, ?, ?, ?, ?, ?);";
     db.query(
       sqlInsert,
-      [group_id, pet_id, title, alarm, desc, time],
+      [group_id, pet_id, title, alarm, desc, time, done],
       (err, result) => {
         if (err) {
           console.log(err);
@@ -359,6 +359,40 @@ router.post("/reports/add", (req, res) => {
   }
   insertData();
   function addNewReport() {
+    res.json({
+      code: resultCode,
+      message: message,
+    });
+  }
+});
+
+router.put("/reports/done", (req, res) => {
+
+  var id = req.query.id;
+  console.log("이게..", id);
+  var resultCode = 404;
+  var message = "에러 발생";
+
+  async function updateData() {
+    var sqlUpdate =
+      "UPDATE homekippa.Report SET `done` = 1 WHERE `id` = " + id;
+    db.query(
+      sqlUpdate,
+      (err, result) => {
+        if (err) {
+          console.log(err);
+          console.log("에러?")
+        } else {
+          resultCode = 200;
+          message = "일과완료성공";
+          console.log("성공?")
+          doneReport();
+        }
+      }
+    );
+  }
+  updateData();
+  function doneReport() {
     res.json({
       code: resultCode,
       message: message,
