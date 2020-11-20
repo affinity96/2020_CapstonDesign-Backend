@@ -93,7 +93,8 @@ router.post("/setComment", (req, res) => {
   var postid = req.body.post_id;
   var userid = req.body.user_id;
   var content = req.body.content;
-  var date = req.body.date;
+  var date = new Date().toString();
+
   var resultCode = 404;
   var message = "에러 발생";
 
@@ -106,8 +107,6 @@ router.post("/setComment", (req, res) => {
       if (err) {
         console.log(err);
       } else {
-        resultCode = 200;
-        message = "comment SET 성공";
       }
     });
   }
