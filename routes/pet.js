@@ -307,7 +307,7 @@ router.get("/reports", (req, res) => {
 
         if (err) {
           console.log(err);
-        } else {
+        } else { 
           console.log("ㅣㄹ절트", result);
           resolve(result);
         }
@@ -372,12 +372,17 @@ router.put("/reports/done", (req, res) => {
   console.log("이게..", id);
   var resultCode = 404;
   var message = "에러 발생";
-
+  var curTime = new Date();
+  var hour = curTime.getHours();
+  var min = curTime.getMinutes();
+  console.log("시가아안", hour, min);
   async function updateData() {
     var sqlUpdate =
-      "UPDATE homekippa.Report SET `done` = 1 WHERE `id` = " + id;
+      "UPDATE homekippa.Report SET `done` = 1 WHERE `id` = " + id + ";";
+    var sqlUpadte2 = 
+      "UPDATE homekippa.Report SET `done_time` = '" + hour + ":"+ min + "' WHERE `id` = "+id + ";";
     db.query(
-      sqlUpdate,
+      sqlUpdate + sqlUpadte2,
       (err, result) => {
         if (err) {
           console.log(err);
