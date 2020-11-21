@@ -270,15 +270,14 @@ router.post("/add", (req, res) => {
   var user_id = req.body.UserId;
   var title = req.body.title;
   var content = req.body.content;
-  var image = path.join(__dirname, "..", "images/") + "profile.png";
 
   console.log("ㄸ호잉또잉", req.body);
   async function insertData() {
     var sqlInsert =
-      "INSERT INTO homekippa.Post (group_id, user_id, title, content, image, `date`, like_num, comment_num, scope) VALUES (?, ?, ?, ?, ?, ? ,? ,?, ?);";
+      "INSERT INTO homekippa.Post (group_id, user_id, title, content, `date`, like_num, comment_num, scope) VALUES (?, ?, ?, ?, ? ,? ,?, ?);";
     db.query(
       sqlInsert,
-      [group_id, user_id, title, content, image, new Date(), 0, 0, "ALL"],
+      [group_id, user_id, title, content, new Date(), 0, 0, "ALL"],
       (err, result) => {
         if (err) {
           console.log(err);
