@@ -84,6 +84,49 @@ router.post("/invite", (req, res) => {
   insertData(from_group.id, to_user.id);
 });
 
+router.post("/invite/accept", (req, res) => {
+  var from_group = req.body.from_group;
+//  var from_user = req.body.from_user;
+  var to_user = req.body.to_user;
+  var message = "그룹에서 당신을 초대하였습니다."
+
+  async function insertData(group, user) {
+    var deletesql = "DELETE FROM GroupInvite WHERE from_group = ? and to_user = ?; ";
+    var sqlUpdateUser = "UPDATE User SET group_id = ? WHERE id = ?; ";
+    var sqlSelect = "SELECT * FROM homekippa.User WHERE id = ?; ";
+    db.query(deletesql + sqlUpdateUser + sqlSelect, [from_group.id, to_user.id, from_group.id, to_user.id, to_user.id], (err, result) => {
+      if (err) {
+        console.log("수락 실패", err);
+      } else {
+        console.log("수락 성공", result);
+        resultCode = 200;
+        message = "유저정보 GET 성공";
+        name = result[2].name;
+        id = result[2].id;
+        group_id = result[2].group_id;
+        image = result[2].image;
+        birth = result[2].birth;
+        phone = result[2].phone;
+        email = result[2].email;
+
+        res.json({
+          code: resultCode,
+          message: message,
+          name,
+          id,
+          group_id,
+          image,
+          birth,
+          phone,
+          email,
+        });
+      }
+    });
+  }
+
+  insertData(from_group.id, to_user.id);
+});
+
 router.get("/image", (req, res) => {
   console.log(req.query.apiName);
   var filePath = req.query.apiName;
