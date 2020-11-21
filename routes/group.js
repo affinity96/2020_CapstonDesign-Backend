@@ -72,7 +72,7 @@ router.post("/invite", (req, res) => {
             res.send({ result: false });
             console.log("초대 전송 실패");
           } else {
-            fcm.sendMessage(from_user, to_user, from_group.name + ' ' +message );
+            fcm.sendMessage(from_user, to_user, from_group.name + ' ' +message, from_group.id);
             res.send({ result: true });
             console.log("초대 전송 성공");
           }
