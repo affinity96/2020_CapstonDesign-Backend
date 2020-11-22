@@ -58,7 +58,7 @@ router.get("/group", (req, res) => {
   queryData()
     .then(function (data) {
       postList = data;
-      // postList.reverse();
+      postList.reverse();
       return data;
     })
     .then(function (data) {
