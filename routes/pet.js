@@ -375,14 +375,23 @@ router.put("/reports/done", (req, res) => {
   var curTime = new Date();
   var hour = curTime.getHours();
   var min = curTime.getMinutes();
+  var done_user_id = req.query.done_user_id;
+  var done_user_image = req.query.done_user_image;
   console.log("시가아안", hour, min);
   async function updateData() {
     var sqlUpdate =
       "UPDATE homekippa.Report SET `done` = 1 WHERE `id` = " + id + ";";
     var sqlUpadte2 = 
       "UPDATE homekippa.Report SET `done_time` = '" + hour + ":"+ min + "' WHERE `id` = "+id + ";";
+    var sqlUpdate3 = 
+      "UPDATE homekippa.Report SET `done_user_id` = '" +done_user_id + "' WHERE `id` = " + id + ";";
+    var sqlUpdate4 = 
+      "UPDATE homekippa.Report SET `done_user_image` = '" +done_user_image + "' WHERE `id` = " + id + ";";
+
+
+     
     db.query(
-      sqlUpdate + sqlUpadte2,
+      sqlUpdate + sqlUpadte2 + sqlUpdate3 + sqlUpdate4,
       (err, result) => {
         if (err) {
           console.log(err);
