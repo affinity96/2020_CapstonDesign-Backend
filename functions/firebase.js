@@ -16,7 +16,7 @@ const db = mysql.createConnection(dbconfig);
 const TITLE = "홈키파";
 const ALARM_CODE = "GROUP_INVITE";
 
-async function sendMessage(from, to, content) {
+async function sendMessage(from, to, content, extra) {
     let query = "SELECT token FROM User WHERE id = ?"
 
     db.query(query, to.id, (err, result) => {
@@ -39,8 +39,8 @@ async function sendMessage(from, to, content) {
         }
     });
 
-    let insertquery = "INSERT INTO Alarm (from_name, to_id, title, content, alarm_code) VALUES (?, ?, ?, ?, ?)";
-    db.query(insertquery, [from.name, to.id, TITLE, content, ALARM_CODE], (err, _) => {
+    let insertquery = "INSERT INTO Alarm (from_name, to_id, title, content, alarm_code, extra) VALUES (?, ?, ?, ?, ?, ?)";
+    db.query(insertquery, [from.name, to.id, TITLE, content, ALARM_CODE, extra], (err, _) => {
       if (err) {
         console.log(err);
       } else {

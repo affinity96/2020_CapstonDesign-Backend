@@ -241,7 +241,7 @@ router.post("/add/des", (req, res) => {
   var group_id = req.body.GroupId;
   var name = req.body.petName;
   var birth = req.body.petBirth; //
-  var image = path.join(__dirname, "..", "images/") + "profile.png";
+  var image = path.join(__dirname, "..", "images/") + "dog_profile_default.jpeg";
   var species = req.body.petSpecies; // 종
   var reg_num = req.body.petRegNum; // 등록번호
   var gender = req.body.petGender; // 성
@@ -302,12 +302,12 @@ router.get("/reports", (req, res) => {
   console.log("잉?", req.query);
   function getDailyWorkData() {
     return new Promise(function (resolve, reject) {
-      var sqlSelect = "SELECT * FROM homekippa.Report WHERE pet_id = ?";
+      var sqlSelect = "SELECT * FROM homekippa.Report WHERE pet_id = ? ORDER BY time ASC";
       db.query(sqlSelect,  pet_id, (err, result) => {
 
         if (err) {
           console.log(err);
-        } else {
+        } else { 
           console.log("ㅣㄹ절트", result);
           resolve(result);
         }
@@ -333,7 +333,7 @@ router.post("/reports/add", (req, res) => {
   var group_id = req.body.GroupId;
   var pet_id = req.body.PetId;
   var title = req.body.dailyWorkName;
-
+  var done = false;
   var alarm = req.body.dailyWorkAlarm;
   var desc = req.body.dailyWorkDesc;
   var time = req.body.dailyWorkTime;
@@ -342,10 +342,10 @@ router.post("/reports/add", (req, res) => {
 
   async function insertData() {
     var sqlInsert =
-      "INSERT INTO homekippa.Report (group_id, pet_id, title, alarm, `desc`, `time`) VALUES (?, ?, ?, ?, ?, ?);";
+      "INSERT INTO homekippa.Report (group_id, pet_id, title, alarm, `desc`, `time`, done) VALUES (?, ?, ?, ?, ?, ?, ?);";
     db.query(
       sqlInsert,
-      [group_id, pet_id, title, alarm, desc, time],
+      [group_id, pet_id, title, alarm, desc, time, done],
       (err, result) => {
         if (err) {
           console.log(err);
@@ -359,6 +359,54 @@ router.post("/reports/add", (req, res) => {
   }
   insertData();
   function addNewReport() {
+    res.json({
+      code: resultCode,
+      message: message,
+    });
+  }
+});
+
+router.put("/reports/done", (req, res) => {
+
+  var id = req.query.id;
+  console.log("이게..", id);
+  var resultCode = 404;
+  var message = "에러 발생";
+  var curTime = new Date();
+  var hour = curTime.getHours();
+  var min = curTime.getMinutes();
+  var done_user_id = req.query.done_user_id;
+  var done_user_image = req.query.done_user_image;
+  console.log("시가아안", hour, min);
+  async function updateData() {
+    var sqlUpdate =
+      "UPDATE homekippa.Report SET `done` = 1 WHERE `id` = " + id + ";";
+    var sqlUpadte2 = 
+      "UPDATE homekippa.Report SET `done_time` = '" + hour + ":"+ min + "' WHERE `id` = "+id + ";";
+    var sqlUpdate3 = 
+      "UPDATE homekippa.Report SET `done_user_id` = '" +done_user_id + "' WHERE `id` = " + id + ";";
+    var sqlUpdate4 = 
+      "UPDATE homekippa.Report SET `done_user_image` = '" +done_user_image + "' WHERE `id` = " + id + ";";
+
+
+     
+    db.query(
+      sqlUpdate + sqlUpadte2 + sqlUpdate3 + sqlUpdate4,
+      (err, result) => {
+        if (err) {
+          console.log(err);
+          console.log("에러?")
+        } else {
+          resultCode = 200;
+          message = "일과완료성공";
+          console.log("성공?")
+          doneReport();
+        }
+      }
+    );
+  }
+  updateData();
+  function doneReport() {
     res.json({
       code: resultCode,
       message: message,
