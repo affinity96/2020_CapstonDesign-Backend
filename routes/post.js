@@ -172,6 +172,7 @@ router.post("/setlike", (req, res) => {
   var isliked = req.body.isLiked;
 
   console.log("postid" + postid);
+  console.log("isliked " + isliked);
 
   if (isliked) {
     var sqlLike =
