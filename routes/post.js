@@ -19,7 +19,8 @@ router.get("/group", (req, res) => {
   var message = "에러 발생";
 
   function queryData() {
-    var sqlSelect = "SELECT * FROM homekippa.Post WHERE group_id = ?";
+    var sqlSelect =
+      "SELECT * FROM homekippa.Post WHERE group_id = ? ORDER BY date DESC";
     return new Promise(function (resolve, reject) {
       db.query(sqlSelect, id, (err, result) => {
         if (err) {
@@ -58,7 +59,6 @@ router.get("/group", (req, res) => {
   queryData()
     .then(function (data) {
       postList = data;
-      postList.reverse();
       return data;
     })
     .then(function (data) {
@@ -130,7 +130,8 @@ router.get("/home", (req, res) => {
     }
     return temp_list;
   }
-  if ((tab_ = "F")) var sqlPost = "SELECT * FROM homekippa.Post";
+  if ((tab_ = "F"))
+    var sqlPost = "SELECT * FROM homekippa.Post ORDER BY date DESC";
   else {
     var sqlPost = "SELECT * FROM homekippa.Post";
   }
