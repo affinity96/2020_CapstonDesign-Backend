@@ -8,7 +8,6 @@ const mysql = require("mysql");
 const dbconfig = require("../config/database.js");
 const db = mysql.createConnection(dbconfig);
 
-
 const multer = require("multer");
 const multerconfig = require("../config/multer.js");
 storage = multer.diskStorage(multerconfig);
@@ -48,11 +47,65 @@ router.get("/", (req, res) => {
   });
 });
 
+router.post("/follow", (req, res) => {
+  var from_id = req.body.from_id;
+  var to_id = req.body.to_id;
+  var resultCode = 404;
+  var message = "에러 발생";
+
+  async function queryData() {
+    var sqlSelect = "INSERT INTO Followrelation (from_id, to_id) VALUES (?, ?)";
+    db.query(sqlSelect, [from_id, to_id], (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        console.log(result[0]);
+        resultCode = 200;
+        message = "FOLLOW 성공";
+      }
+    });
+  }
+
+  queryData().then(function () {
+    res.json({
+      code: resultCode,
+      message: message,
+    });
+  });
+});
+router.post("/unfollow", (req, res) => {
+  var from_id = req.body.from_id;
+  var to_id = req.body.to_id;
+  var resultCode = 404;
+  var message = "에러 발생";
+
+  async function queryData() {
+    var sqlSelect =
+      "DELETE FROM Followrelation WHERE from_id = ? and to_id = ?; ";
+    db.query(sqlSelect, [from_id, to_id], (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        console.log(result[0]);
+        resultCode = 200;
+        message = "UNFOLLOW 성공";
+      }
+    });
+  }
+
+  queryData().then(function () {
+    res.json({
+      code: resultCode,
+      message: message,
+    });
+  });
+});
+
 router.post("/invite", (req, res) => {
   var from_group = req.body.from_group;
   var from_user = req.body.from_user;
   var to_user = req.body.to_user;
-  var message = "그룹에서 당신을 초대하였습니다."
+  var message = "그룹에서 당신을 초대하였습니다.";
 
   async function insertData(group, user) {
     var checksql =
@@ -72,7 +125,12 @@ router.post("/invite", (req, res) => {
             res.send({ result: false });
             console.log("초대 전송 실패");
           } else {
-            fcm.sendMessage(from_user, to_user, from_group.name + ' ' +message, from_group.id);
+            fcm.sendMessage(
+              from_user,
+              to_user,
+              from_group.name + " " + message,
+              from_group.id
+            );
             res.send({ result: true });
             console.log("초대 전송 성공");
           }
@@ -86,42 +144,47 @@ router.post("/invite", (req, res) => {
 
 router.post("/invite/accept", (req, res) => {
   var from_group = req.body.from_group;
-//  var from_user = req.body.from_user;
+  //  var from_user = req.body.from_user;
   var to_user = req.body.to_user;
-  var message = "그룹에서 당신을 초대하였습니다."
+  var message = "그룹에서 당신을 초대하였습니다.";
 
   async function insertData(group, user) {
-    var deletesql = "DELETE FROM GroupInvite WHERE from_group = ? and to_user = ?; ";
+    var deletesql =
+      "DELETE FROM GroupInvite WHERE from_group = ? and to_user = ?; ";
     var sqlUpdateUser = "UPDATE User SET group_id = ? WHERE id = ?; ";
     var sqlSelect = "SELECT * FROM homekippa.User WHERE id = ?; ";
-    db.query(deletesql + sqlUpdateUser + sqlSelect, [from_group.id, to_user.id, from_group.id, to_user.id, to_user.id], (err, result) => {
-      if (err) {
-        console.log("수락 실패", err);
-      } else {
-        console.log("수락 성공", result);
-        resultCode = 200;
-        message = "유저정보 GET 성공";
-        name = result[2].name;
-        id = result[2].id;
-        group_id = result[2].group_id;
-        image = result[2].image;
-        birth = result[2].birth;
-        phone = result[2].phone;
-        email = result[2].email;
+    db.query(
+      deletesql + sqlUpdateUser + sqlSelect,
+      [from_group.id, to_user.id, from_group.id, to_user.id, to_user.id],
+      (err, result) => {
+        if (err) {
+          console.log("수락 실패", err);
+        } else {
+          console.log("수락 성공", result);
+          resultCode = 200;
+          message = "유저정보 GET 성공";
+          name = result[2].name;
+          id = result[2].id;
+          group_id = result[2].group_id;
+          image = result[2].image;
+          birth = result[2].birth;
+          phone = result[2].phone;
+          email = result[2].email;
 
-        res.json({
-          code: resultCode,
-          message: message,
-          name,
-          id,
-          group_id,
-          image,
-          birth,
-          phone,
-          email,
-        });
+          res.json({
+            code: resultCode,
+            message: message,
+            name,
+            id,
+            group_id,
+            image,
+            birth,
+            phone,
+            email,
+          });
+        }
       }
-    });
+    );
   }
 
   insertData(from_group.id, to_user.id);
@@ -131,18 +194,16 @@ router.get("/image", (req, res) => {
   console.log(req.query.apiName);
   var filePath = req.query.apiName;
 
-  fs.readFile(filePath, (err, data) => {	
-      if(err){
-        console.log(err);
-        res.end(null);
-      } else {
+  fs.readFile(filePath, (err, data) => {
+    if (err) {
+      console.log(err);
+      res.end(null);
+    } else {
       console.log(filePath);
       console.log(data);
       res.end(data);
-      }
     }
-  );
-
+  });
 });
 
 router.post(
@@ -236,87 +297,87 @@ router.post(
 );
 
 router.post("/add", (req, res) => {
-    var id = req.body.userId;
-    var name = req.body.groupName;
-    var tag = createTag();
-    var image = path.join(__dirname, "..", "images/") + "group_profile_default.jpg";
-    var address = req.body.groupAddress;
-    // 배경사진 var background = req.body.groupBackground;
-    var introduction = req.body.groupIntroduction;
-    var resultCode = 404;
-    var message = "에러 발생";
+  var id = req.body.userId;
+  var name = req.body.groupName;
+  var tag = createTag();
+  var image =
+    path.join(__dirname, "..", "images/") + "group_profile_default.jpg";
+  var address = req.body.groupAddress;
+  // 배경사진 var background = req.body.groupBackground;
+  var introduction = req.body.groupIntroduction;
+  var resultCode = 404;
+  var message = "에러 발생";
 
-    function createTag() {
-      return (randomTag = Math.floor(Math.random() * 10000));
-    }
+  function createTag() {
+    return (randomTag = Math.floor(Math.random() * 10000));
+  }
 
-    async function checkDuplication() {
-      var checkCode = true;
+  async function checkDuplication() {
+    var checkCode = true;
 
-      while (checkCode) {
-        checkCode = searchTag();
-        if (checkCode) {
-          tag = createTag();
-        } else {
-          insertData();
-        }
+    while (checkCode) {
+      checkCode = searchTag();
+      if (checkCode) {
+        tag = createTag();
+      } else {
+        insertData();
       }
     }
+  }
 
-    function searchTag() {
-      var sqlSelect =
-        "SELECT tag FROM homekippa.Group WHERE name = ? and tag = ?";
-      db.query(sqlSelect, [name, tag], (err, result) => {
-        if (err) {
-          console.log(err);
-          return false;
-        } else if (result[0]) {
-          return true;
-        } else {
-          return false;
-        }
-      });
-    }
+  function searchTag() {
+    var sqlSelect =
+      "SELECT tag FROM homekippa.Group WHERE name = ? and tag = ?";
+    db.query(sqlSelect, [name, tag], (err, result) => {
+      if (err) {
+        console.log(err);
+        return false;
+      } else if (result[0]) {
+        return true;
+      } else {
+        return false;
+      }
+    });
+  }
 
-    function insertData() {
-      var sqlInsert =
-        "INSERT INTO homekippa.Group (name, tag, image, address, introduction) VALUES (?, ?, ?, ?, ?)";
-      db.query(
-        sqlInsert,
-        [name, tag, image, address, introduction],
-        (err, result) => {
-          if (err) {
-            console.log(err);
-          } else {
-            updateData(result.insertId);
-          }
-        }
-      );
-    }
-
-    function updateData(groupId) {
-      var sqlUpdate = "UPDATE homekippa.User SET group_id = ? WHERE id = ?";
-      db.query(sqlUpdate, [groupId, id], (err, result) => {
+  function insertData() {
+    var sqlInsert =
+      "INSERT INTO homekippa.Group (name, tag, image, address, introduction) VALUES (?, ?, ?, ?, ?)";
+    db.query(
+      sqlInsert,
+      [name, tag, image, address, introduction],
+      (err, result) => {
         if (err) {
           console.log(err);
         } else {
-          resultCode = 200;
-          message = "그룹생성 성공";
-          send();
+          updateData(result.insertId);
         }
-      });
-    }
+      }
+    );
+  }
 
-    function send() {
-      console.log(req.body);
-      res.json({
-        code: resultCode,
-        message: message,
-      });
-    }
+  function updateData(groupId) {
+    var sqlUpdate = "UPDATE homekippa.User SET group_id = ? WHERE id = ?";
+    db.query(sqlUpdate, [groupId, id], (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        resultCode = 200;
+        message = "그룹생성 성공";
+        send();
+      }
+    });
+  }
 
-    checkDuplication();
-  
+  function send() {
+    console.log(req.body);
+    res.json({
+      code: resultCode,
+      message: message,
+    });
+  }
+
+  checkDuplication();
 });
 
 module.exports = router;
