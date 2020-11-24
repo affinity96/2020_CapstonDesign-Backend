@@ -1,5 +1,5 @@
 module.exports = {
-    host : '101.101.208.180',
+    host : '115.85.183.152',
     user : 'root',
     password : 'ghazlvk',
     database : 'homekippa',
