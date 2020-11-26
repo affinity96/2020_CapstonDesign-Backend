@@ -47,60 +47,6 @@ router.get("/", (req, res) => {
   });
 });
 
-router.post("/follow", (req, res) => {
-  var from_id = req.body.from_id;
-  var to_id = req.body.to_id;
-  var resultCode = 404;
-  var message = "에러 발생";
-
-  async function queryData() {
-    var sqlSelect = "INSERT INTO Followrelation (from_id, to_id) VALUES (?, ?)";
-    db.query(sqlSelect, [from_id, to_id], (err, result) => {
-      if (err) {
-        console.log(err);
-      } else {
-        console.log(result[0]);
-        resultCode = 200;
-        message = "FOLLOW 성공";
-      }
-    });
-  }
-
-  queryData().then(function () {
-    res.json({
-      code: resultCode,
-      message: message,
-    });
-  });
-});
-router.post("/unfollow", (req, res) => {
-  var from_id = req.body.from_id;
-  var to_id = req.body.to_id;
-  var resultCode = 404;
-  var message = "에러 발생";
-
-  async function queryData() {
-    var sqlSelect =
-      "DELETE FROM Followrelation WHERE from_id = ? and to_id = ?; ";
-    db.query(sqlSelect, [from_id, to_id], (err, result) => {
-      if (err) {
-        console.log(err);
-      } else {
-        console.log(result[0]);
-        resultCode = 200;
-        message = "UNFOLLOW 성공";
-      }
-    });
-  }
-
-  queryData().then(function () {
-    res.json({
-      code: resultCode,
-      message: message,
-    });
-  });
-});
-
 router.post("/invite", (req, res) => {
   var from_group = req.body.from_group;
   var from_user = req.body.from_user;
