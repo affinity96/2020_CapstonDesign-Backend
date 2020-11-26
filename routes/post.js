@@ -79,7 +79,9 @@ router.get("/group", (req, res) => {
 });
 
 router.get("/home", (req, res) => {
+  var groupid = req.query.groupId;
   var tab = req.query.tab_;
+
   var postList = [];
   var groupList = [];
   var likeList = [];
@@ -88,7 +90,7 @@ router.get("/home", (req, res) => {
 
   function getPostData(sql) {
     return new Promise(function (resolve, reject) {
-      db.query(sql, (err, result) => {
+      db.query(sql, groupid, (err, result) => {
         if (err) {
           console.log(err);
         } else {
@@ -131,9 +133,10 @@ router.get("/home", (req, res) => {
     return temp_list;
   }
   if ((tab_ = "F"))
-    var sqlPost = "SELECT * FROM homekippa.Post ORDER BY date DESC";
+    var sqlPost =
+      "SELECT A.* FROM homekippa.Post A LEFT JOIN homekippa.Followrelation B on A.group_id = B.to_id WHERE B.from_id = ?;";
   else {
-    var sqlPost = "SELECT * FROM homekippa.Post";
+    var sqlPost = "SELECT * FROM homekippa.Post ORDER BY date DESC";
   }
 
   //Execute
@@ -153,8 +156,7 @@ router.get("/home", (req, res) => {
     })
     .then(function (data) {
       likeList = data;
-      console.log("LIKEDATA");
-      console.log(likeList);
+
       resultCode = 200;
       message = "data get 성공";
       res.json({

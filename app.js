@@ -18,6 +18,7 @@ const groupRouter = require("./routes/group");
 const petRouter = require("./routes/pet");
 const postRouter = require("./routes/post");
 const commentRouter = require("./routes/comment");
+const followRouter = require("./routes/follow");
 const weatherRouter = require("./routes/weather");
 
 //const firebaseRouter = require("./routes/firebase");
@@ -31,6 +32,7 @@ app.use("/group", groupRouter);
 app.use("/pet", petRouter);
 app.use("/post", postRouter);
 app.use("/comment", commentRouter);
+app.use("/follow", followRouter);
 app.use("/weather", weatherRouter);
 //app.use("/firebase", firebaseRouter);
 
