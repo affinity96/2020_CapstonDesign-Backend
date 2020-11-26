@@ -50,3 +50,4 @@ async function sendMessage(from, to, content, extra) {
 }
 
 exports.sendMessage = sendMessage;
+exports.admin = admin;
