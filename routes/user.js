@@ -1,3 +1,4 @@
+var admin = require("firebase-admin");
 var express = require("express");
 var router = express.Router();
 
