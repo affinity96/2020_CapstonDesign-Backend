@@ -1,4 +1,4 @@
-var admin = require("firebase-admin");
+var admin = require("../functions/firebase").admin;
 var express = require("express");
 var router = express.Router();
 
@@ -82,7 +82,7 @@ router.post("/add", (req, res) => {
       "INSERT INTO User (id, name, phone, email, birth) VALUES (?, ?, ?, ?, ?)";
     db.query(sql, [id, name, phone, email, birth], (err, result) => {
       if (err) {
-        //console.log(err);
+        console.log(err);
         admin.auth().deleteUser(id);
       } else {
         resultCode = 200;
