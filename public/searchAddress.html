@@ -6,23 +6,22 @@
 <script>
     var element_wrap = document.getElementById('tt');
     new daum.Postcode({
-
+       
         oncomplete: function(data) {
-
+            console.log("이것은,,", data);
             if(data.userSelectedType=="R"){
 
                 // userSelectedType : 검색 결과에서 사용자가 선택한 주소의 타입
 
                 // return type : R - roadAddress, J : jibunAddress
-
                 // TestApp 은 안드로이드에서 등록한 이름
                 console.log(window.TestApp);
-                window.TestApp.setAddress(data.zonecode, data.roadAddress, data.buildingName);
+                window.TestApp.setAddress(data.zonecode, data.roadAddress, data.buildingName, data.bname);
             }
 
             else{
 
-                window.TestApp.setAddress(data.zonecode, data.jibunAddress, data.buildingName);
+                window.TestApp.setAddress(data.zonecode, data.jibunAddress, data.buildingName, data.bname);
             }
 
         },
