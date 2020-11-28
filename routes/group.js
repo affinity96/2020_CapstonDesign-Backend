@@ -37,6 +37,7 @@ router.get("/", (req, res) => {
           introduction: result[0].introduction,
           background: result[0].background,
           tag: result[0].tag,
+          area:result[0].area
         });
       }
     });
