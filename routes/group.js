@@ -161,6 +161,7 @@ router.post(
   (req, res) => {
     var id = req.body.userId;
     var name = req.body.groupName;
+    var area = req.body.area;
     var tag = createTag();
     var image = path.join(__dirname, "..", "images/") + req.file.filename;
     var address = req.body.groupAddress;
@@ -203,10 +204,10 @@ router.post(
 
     function insertData() {
       var sqlInsert =
-        "INSERT INTO homekippa.Group (name, tag, image, address, introduction) VALUES (?, ?, ?, ?, ?)";
+        "INSERT INTO homekippa.Group (name, tag, image, address, introduction, area) VALUES (?, ?, ?, ?, ?, ?)";
       db.query(
         sqlInsert,
-        [name, tag, image, address, introduction],
+        [name, tag, image, address, introduction, area],
         (err, result) => {
           if (err) {
             console.log(err);
@@ -246,6 +247,7 @@ router.post(
 router.post("/add", (req, res) => {
   var id = req.body.userId;
   var name = req.body.groupName;
+  var area = req.body.area;
   var tag = createTag();
   var image =
     path.join(__dirname, "..", "images/") + "group_profile_default.jpg";

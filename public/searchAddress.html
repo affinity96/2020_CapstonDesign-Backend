@@ -25,12 +25,13 @@
                 // return type : R - roadAddress, J : jibunAddress
                 // TestApp 은 안드로이드에서 등록한 이름
                 console.log(window.TestApp);
-                window.TestApp.setAddress(data.zonecode, data.roadAddress, data.buildingName, data.bname);
+                var area = data.sigungu + ' ' + data.bname;
+                window.TestApp.setAddress(data.zonecode, data.roadAddress, data.buildingName, area);
             }
 
             else {
 
-                window.TestApp.setAddress(data.zonecode, data.jibunAddress, data.buildingName, data.bname);
+                window.TestApp.setAddress(data.zonecode, data.jibunAddress, data.buildingName, area);
             }
 
         },
