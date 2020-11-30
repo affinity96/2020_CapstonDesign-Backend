@@ -55,6 +55,7 @@ router.get("/getComment", (req, res) => {
     var temp_list = [];
     var sqlSelectGroup = "SELECT * FROM homekippa.Group WHERE id = ?";
     for (var i = 0; i < list.length; i++) {
+      
       var t = await delay(list[i], sqlSelectGroup, list[i].group_id);
       temp_list.push(t[0]);
     }
@@ -93,7 +94,7 @@ router.post("/setComment", (req, res) => {
   var postid = req.body.post_id;
   var userid = req.body.user_id;
   var content = req.body.content;
-  var date = new Date().toString();
+  var date = new Date();
 
   var resultCode = 404;
   var message = "에러 발생";
