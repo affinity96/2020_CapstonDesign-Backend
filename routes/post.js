@@ -81,7 +81,8 @@ router.get("/group", (req, res) => {
 router.get("/home", (req, res) => {
   var groupid = req.query.groupId;
   var tab = req.query.tab_;
-
+  var area = req.query.area;
+  console.log(tab);
   var postList = [];
   var groupList = [];
   var likeList = [];
@@ -132,13 +133,14 @@ router.get("/home", (req, res) => {
     }
     return temp_list;
   }
-  if ((tab_ = "F"))
+  if (tab == "F"){
     var sqlPost =
-      "SELECT A.* FROM homekippa.Post A LEFT JOIN homekippa.Followrelation B on A.group_id = B.to_id WHERE B.from_id = ?;";
-  else {
-    var sqlPost = "SELECT * FROM homekippa.Post ORDER BY date DESC";
+    "SELECT A.* FROM homekippa.Post A LEFT JOIN homekippa.Followrelation B on A.group_id = B.to_id WHERE B.from_id = ?;";
   }
-
+  else {
+    var sqlPost = "SELECT * FROM homekippa.Post WHERE `area` = '" + area+"' ORDER BY `date` DESC";
+  }
+console.log(sqlPost);
   //Execute
   getPostData(sqlPost)
     .then(function (data) {
@@ -270,7 +272,7 @@ router.post("/add", (req, res) => {
   var id = req.query.groupId;
   var resultCode = 404;
   var message = "에러 발생";
-
+  var area = req.body.area;
   var group_id = req.body.GroupId;
   var user_id = req.body.UserId;
   var title = req.body.title;
@@ -279,10 +281,10 @@ router.post("/add", (req, res) => {
   console.log("ㄸ호잉또잉", req.body);
   async function insertData() {
     var sqlInsert =
-      "INSERT INTO homekippa.Post (group_id, user_id, title, content, `date`, like_num, comment_num, scope) VALUES (?, ?, ?, ?, ? ,? ,?, ?);";
+      "INSERT INTO homekippa.Post (group_id, user_id, title, content, `date`, like_num, comment_num, scope, area) VALUES (?, ?, ?, ?, ? ,? ,?, ?, ?);";
     db.query(
       sqlInsert,
-      [group_id, user_id, title, content, new Date(), 0, 0, "ALL"],
+      [group_id, user_id, title, content, new Date(), 0, 0, "ALL", area],
       (err, result) => {
         if (err) {
           console.log(err);
