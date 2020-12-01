@@ -72,6 +72,7 @@ router.get("/getComment", (req, res) => {
     })
     .then(function (data) {
       userList = data;
+      console.log(userList);
       return getGroupData(data);
     })
     .then(function (data) {
@@ -93,7 +94,7 @@ router.post("/setComment", (req, res) => {
   var postid = req.body.post_id;
   var userid = req.body.user_id;
   var content = req.body.content;
-  var date = new Date().toString();
+  var date = new Date();
 
   var resultCode = 404;
   var message = "에러 발생";
