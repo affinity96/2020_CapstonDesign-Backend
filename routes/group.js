@@ -270,7 +270,7 @@ router.post(
 
     function insertData() {
       var sqlInsert =
-        "INSERT INTO homekippa.Group (name, tag, image, address, introduction, cover area) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        "INSERT INTO homekippa.Group (name, tag, image, address, introduction, cover, area) VALUES (?, ?, ?, ?, ?, ?, ?)";
       db.query(
         sqlInsert,
         [name, tag, image, address, introduction, cover, area],
