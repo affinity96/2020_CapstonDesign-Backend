@@ -55,6 +55,7 @@ router.get("/getComment", (req, res) => {
     var temp_list = [];
     var sqlSelectGroup = "SELECT * FROM homekippa.Group WHERE id = ?";
     for (var i = 0; i < list.length; i++) {
+      
       var t = await delay(list[i], sqlSelectGroup, list[i].group_id);
       temp_list.push(t[0]);
     }
