@@ -35,7 +35,7 @@ router.get("/", (req, res) => {
           image: result[0].image,
           address: result[0].address,
           introduction: result[0].introduction,
-          background: result[0].background,
+          background: result[0].cover,
           tag: result[0].tag,
         });
       }
