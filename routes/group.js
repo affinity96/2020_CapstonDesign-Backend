@@ -189,7 +189,36 @@ router.post(
     updateData();
   });
 
+  router.post("/reset/cover", (req, res) => {
+    var id = req.query.groupId;
+    var cover = path.join(__dirname, "..", "images/") + "group_cover_default.jpg";
+    var resultCode = 404;
+    var message = "에러 발생";
 
+    function updateData() {
+      var sqlUpdate = "UPDATE homekippa.Group SET cover = ? WHERE id = ?";
+      db.query(sqlUpdate, [cover, id], (err, result) => {
+        if (err) {
+          console.log(err);
+        } else {
+          resultCode = 200;
+          message = "커버변경 성공";
+          send();
+        }
+      });
+    }
+
+    function send() {
+      console.log(req.file);
+      console.log(req.body);
+      res.json({
+        code: resultCode,
+        message: message,
+      });
+    }
+
+    updateData();
+  });
 
 router.post(
   "/add/photo",
