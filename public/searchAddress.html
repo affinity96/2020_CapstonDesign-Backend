@@ -7,18 +7,9 @@
 <script>
     var element_wrap = document.getElementById('tt');
     new daum.Postcode({
-<<<<<<< HEAD
-
-        oncomplete: function (data) {
-            console.log("hello");
-
-            if (data.userSelectedType == "R") {
-=======
        
         oncomplete: function(data) {
-            console.log("이것은,,", data);
             if(data.userSelectedType=="R"){
->>>>>>> 3ba6f9250ca449705f6ba2754afcdfe0abafc0e8
 
                 // userSelectedType : 검색 결과에서 사용자가 선택한 주소의 타입
 
