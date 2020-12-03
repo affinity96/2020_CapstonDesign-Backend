@@ -51,6 +51,7 @@ async function sendMessage(from, to, content, extra) {
 
 async function sendMessageToGroup(to, content, extra) {
   let query = "SELECT token FROM User WHERE group_id = ?"
+  console.log(content);
 
   db.query(query, to, (err, result) => {
       if (err) {
@@ -58,21 +59,26 @@ async function sendMessageToGroup(to, content, extra) {
       } else {
         console.log("result: ", result);
 
-/*        messaging.send({
+        var tokens = [];
+        for(i = 0; i < result.length; i++){
+          tokens[i] = result[i].token;
+        }
+
+        messaging.sendMulticast({
             notification: {
                 title: TITLE,
                 body: content
             },
-            token: result[0].token
+            tokens
         }).then((response) => {
             console.log("message sent", response);
         }).catch((error) => {
             console.log("message error", error);
-        });*/
+        });
       }
   });
-/*
-  let insertquery = "INSERT INTO Alarm (from_name, to_id, title, content, alarm_code, extra) VALUES (?, ?, ?, ?, ?, ?)";
+
+/*  let insertquery = "INSERT INTO Alarm (from_name, to_id, title, content, alarm_code, extra) VALUES (?, ?, ?, ?, ?, ?)";
   db.query(insertquery, [from.name, to.id, TITLE, content, ALARM_CODE, extra], (err, _) => {
     if (err) {
       console.log(err);

@@ -407,7 +407,7 @@ router.put("/reports/done", (req, res) => {
     );
   }
   updateData().then(() => {
-    var sqlGroup = "SELECT group_id FROM homekippa.Report WHERE id = ?"
+    var sqlGroup = "SELECT title, group_id FROM homekippa.Report WHERE id = ?"
     db.query(sqlGroup, id, (err, result) => {
       if (err) {
         console.log(err);
@@ -416,7 +416,7 @@ router.put("/reports/done", (req, res) => {
         
         fcm.sendMessageToGroup(
           result[0].group_id,
-          "예정된 일과가 완료되었습니다!",
+          "예정된 " + result[0].title + " 일과가 완료되었습니다!",
           result[0].group_id
         );
 
