@@ -424,11 +424,12 @@ router.put("/reports/done", (req, res) => {
       }
     })
   });
+
   function doneReport() {
     res.json({
       code: resultCode,
       message: message,
-    });
+    })
   }
 });
 
