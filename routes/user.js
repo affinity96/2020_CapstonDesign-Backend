@@ -15,6 +15,7 @@ router.get("/", (req, res) => {
   var birth = "";
   var phone = "";
   var email = "";
+  var gender;
   var resultCode = 404;
   var message = "에러 발생";
 
@@ -39,7 +40,9 @@ router.get("/", (req, res) => {
             birth = result[0].birth;
             phone = result[0].phone;
             email = result[0].email;
-    
+            gender = result[0].gender;
+
+
             res.json({
               code: resultCode,
               message: message,
@@ -50,6 +53,7 @@ router.get("/", (req, res) => {
               birth,
               phone,
               email,
+              gender,
             });
           }
         });
@@ -66,6 +70,7 @@ router.post("/add", (req, res) => {
   var phone = "+82" + req.body.userPhone;
   var email = req.body.userEmail;
   var birth = req.body.userBirth;
+  var gender = req.body.userGender;
   var resultCode = 404;
   var message = "에러 발생";
 
@@ -79,8 +84,8 @@ router.post("/add", (req, res) => {
 
   async function insertData() {
     var sql =
-      "INSERT INTO User (id, name, phone, email, birth) VALUES (?, ?, ?, ?, ?)";
-    db.query(sql, [id, name, phone, email, birth], (err, result) => {
+      "INSERT INTO User (id, name, phone, email, birth, gender) VALUES (?, ?, ?, ?, ?, ?)";
+    db.query(sql, [id, name, phone, email, birth, gender], (err, result) => {
       if (err) {
         console.log(err);
         admin.auth().deleteUser(id);
