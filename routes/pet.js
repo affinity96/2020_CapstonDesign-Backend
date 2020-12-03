@@ -182,7 +182,7 @@ router.post(
   var group_id = req.body.GroupId;
   var name = req.body.petName;
   var birth = req.body.petBirth; //
-  var image = path.join(__dirname, "..", "images/") + req.file.filename;
+  var image = "./images/" + req.file.filename;
   var species = req.body.petSpecies; // 종
   var reg_num = req.body.petRegNum; // 등록번호
   var gender = req.body.petGender; // 성
@@ -242,7 +242,7 @@ router.post("/add/des", (req, res) => {
   var group_id = req.body.GroupId;
   var name = req.body.petName;
   var birth = req.body.petBirth; //
-  var image = path.join(__dirname, "..", "images/") + "pet_profile_default.jpg";
+  var image = "./images/" + "pet_profile_default.jpg";
   var species = req.body.petSpecies; // 종
   var reg_num = req.body.petRegNum; // 등록번호
   var gender = req.body.petGender; // 성

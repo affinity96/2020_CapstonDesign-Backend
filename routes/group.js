@@ -229,9 +229,9 @@ router.post(
     var name = req.body.groupName;
     var area = req.body.area;
     var tag = createTag();
-    var image = path.join(__dirname, "..", "images/") + req.file.filename;
+    var image = "./images/" + req.file.filename;
     var address = req.body.groupAddress;
-    var cover = path.join(__dirname, "..", "images/") + "group_cover_default.jpeg";
+    var cover = "./images/" + "group_cover_default.jpeg";
     var introduction = req.body.groupIntroduction;
     var resultCode = 404;
     var message = "에러 발생";
@@ -316,9 +316,9 @@ router.post("/add", (req, res) => {
   var area = req.body.area;
   var tag = createTag();
   var image =
-    path.join(__dirname, "..", "images/") + "group_profile_default.jpg";
+  "./images/" + "group_profile_default.jpg";
   var address = req.body.groupAddress;
-  var cover = path.join(__dirname, "..", "images/") + "group_cover_default.jpeg";
+  var cover = "./images/" + "group_cover_default.jpeg";
   var introduction = req.body.groupIntroduction;
   var resultCode = 404;
   var message = "에러 발생";
