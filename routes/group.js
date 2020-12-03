@@ -35,7 +35,7 @@ router.get("/", (req, res) => {
           image: result[0].image,
           address: result[0].address,
           introduction: result[0].introduction,
-          background: result[0].background,
+          cover: result[0].cover,
           tag: result[0].tag,
           area:result[0].area
         });
@@ -154,6 +154,72 @@ router.get("/image", (req, res) => {
 });
 
 router.post(
+  "/add/cover",
+  multer({
+    storage: storage,
+  }).single("upload"),
+  (req, res) => {
+    var id = req.body.groupId;
+    var cover = path.join(__dirname, "..", "images/") + req.file.filename;
+    var resultCode = 404;
+    var message = "에러 발생";
+
+    function updateData() {
+      var sqlUpdate = "UPDATE homekippa.Group SET cover = ? WHERE id = ?";
+      db.query(sqlUpdate, [cover, id], (err, result) => {
+        if (err) {
+          console.log(err);
+        } else {
+          resultCode = 200;
+          message = "커버변경 성공";
+          send();
+        }
+      });
+    }
+
+    function send() {
+      console.log(req.file);
+      console.log(req.body);
+      res.json({
+        code: resultCode,
+        message: message,
+      });
+    }
+
+    updateData();
+  });
+
+  router.post("/reset/cover", (req, res) => {
+    var id = req.query.groupId;
+    var cover = path.join(__dirname, "..", "images/") + "group_cover_default.jpeg";
+    var resultCode = 404;
+    var message = "에러 발생";
+
+    function updateData() {
+      var sqlUpdate = "UPDATE homekippa.Group SET cover = ? WHERE id = ?";
+      db.query(sqlUpdate, [cover, id], (err, result) => {
+        if (err) {
+          console.log(err);
+        } else {
+          resultCode = 200;
+          message = "커버변경 성공";
+          send();
+        }
+      });
+    }
+
+    function send() {
+      console.log(req.query);
+      res.json({
+        code: resultCode,
+        message: message,
+      });
+    }
+
+    updateData();
+  });
+
+router.post(
   "/add/photo",
   multer({
     storage: storage,
@@ -165,7 +231,7 @@ router.post(
     var tag = createTag();
     var image = path.join(__dirname, "..", "images/") + req.file.filename;
     var address = req.body.groupAddress;
-    // 배경사진 var background = req.body.groupBackground;
+    var cover = path.join(__dirname, "..", "images/") + "group_cover_default.jpeg";
     var introduction = req.body.groupIntroduction;
     var resultCode = 404;
     var message = "에러 발생";
@@ -204,10 +270,10 @@ router.post(
 
     function insertData() {
       var sqlInsert =
-        "INSERT INTO homekippa.Group (name, tag, image, address, introduction, area) VALUES (?, ?, ?, ?, ?, ?)";
+        "INSERT INTO homekippa.Group (name, tag, image, address, introduction, cover area) VALUES (?, ?, ?, ?, ?, ?, ?)";
       db.query(
         sqlInsert,
-        [name, tag, image, address, introduction, area],
+        [name, tag, image, address, introduction, cover, area],
         (err, result) => {
           if (err) {
             console.log(err);
@@ -252,7 +318,7 @@ router.post("/add", (req, res) => {
   var image =
     path.join(__dirname, "..", "images/") + "group_profile_default.jpg";
   var address = req.body.groupAddress;
-  // 배경사진 var background = req.body.groupBackground;
+  var cover = path.join(__dirname, "..", "images/") + "group_cover_default.jpeg";
   var introduction = req.body.groupIntroduction;
   var resultCode = 404;
   var message = "에러 발생";
@@ -291,10 +357,10 @@ router.post("/add", (req, res) => {
 
   function insertData() {
     var sqlInsert =
-      "INSERT INTO homekippa.Group (name, tag, image, address, introduction, `area`) VALUES (?, ?, ?, ?, ?, ?)";
+      "INSERT INTO homekippa.Group (name, tag, image, address, introduction, cover, `area`) VALUES (?, ?, ?, ?, ?, ?, ?)";
     db.query(
       sqlInsert,
-      [name, tag, image, address, introduction, area],
+      [name, tag, image, address, introduction, cover, area],
       (err, result) => {
         if (err) {
           console.log(err);

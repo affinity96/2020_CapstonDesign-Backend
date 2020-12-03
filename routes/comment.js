@@ -73,6 +73,7 @@ router.get("/getComment", (req, res) => {
     })
     .then(function (data) {
       userList = data;
+      console.log(userList);
       return getGroupData(data);
     })
     .then(function (data) {
