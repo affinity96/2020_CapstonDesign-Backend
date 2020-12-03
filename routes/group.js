@@ -35,7 +35,7 @@ router.get("/", (req, res) => {
           image: result[0].image,
           address: result[0].address,
           introduction: result[0].introduction,
-          background: result[0].background,
+          cover: result[0].cover,
           tag: result[0].tag,
           area:result[0].area
         });
@@ -191,7 +191,7 @@ router.post(
 
   router.post("/reset/cover", (req, res) => {
     var id = req.query.groupId;
-    var cover = path.join(__dirname, "..", "images/") + "group_cover_default.jpg";
+    var cover = path.join(__dirname, "..", "images/") + "group_cover_default.jpeg";
     var resultCode = 404;
     var message = "에러 발생";
 
@@ -209,8 +209,7 @@ router.post(
     }
 
     function send() {
-      console.log(req.file);
-      console.log(req.body);
+      console.log(req.query);
       res.json({
         code: resultCode,
         message: message,
@@ -232,7 +231,7 @@ router.post(
     var tag = createTag();
     var image = path.join(__dirname, "..", "images/") + req.file.filename;
     var address = req.body.groupAddress;
-    var cover = path.join(__dirname, "..", "images/") + "group_cover_default.jpg";
+    var cover = path.join(__dirname, "..", "images/") + "group_cover_default.jpeg";
     var introduction = req.body.groupIntroduction;
     var resultCode = 404;
     var message = "에러 발생";
@@ -319,7 +318,7 @@ router.post("/add", (req, res) => {
   var image =
     path.join(__dirname, "..", "images/") + "group_profile_default.jpg";
   var address = req.body.groupAddress;
-  var cover = path.join(__dirname, "..", "images/") + "group_cover_default.jpg";
+  var cover = path.join(__dirname, "..", "images/") + "group_cover_default.jpeg";
   var introduction = req.body.groupIntroduction;
   var resultCode = 404;
   var message = "에러 발생";
