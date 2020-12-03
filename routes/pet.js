@@ -371,8 +371,6 @@ router.put("/reports/done", (req, res) => {
 
   var id = req.query.id;
   console.log("이게..", id);
-  var resultCode = 404;
-  var message = "에러 발생";
   var curTime = new Date();
   var hour = curTime.getHours();
   var min = curTime.getMinutes();
@@ -397,11 +395,10 @@ router.put("/reports/done", (req, res) => {
         if (err) {
           console.log(err);
           console.log("에러?")
+          doneReport(404, "에러 발생");
         } else {
-          resultCode = 200;
-          message = "일과완료성공";
           console.log("성공?")
-          doneReport();
+          doneReport(200, "일과완료성공");
         }
       }
     );
@@ -424,11 +421,12 @@ router.put("/reports/done", (req, res) => {
       }
     })
   });
-  function doneReport() {
+
+  function doneReport(resultCode, message) {
     res.json({
       code: resultCode,
       message: message,
-    });
+    })
   }
 });
 
