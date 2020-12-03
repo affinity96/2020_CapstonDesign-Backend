@@ -1,4 +1,5 @@
 var express = require("express");
+var fcm = require("../functions/firebase");
 var router = express.Router();
 
 var webdriver = require("selenium-webdriver");
@@ -405,7 +406,24 @@ router.put("/reports/done", (req, res) => {
       }
     );
   }
-  updateData();
+  updateData().then(() => {
+    var sqlGroup = "SELECT title, group_id FROM homekippa.Report WHERE id = ?"
+    db.query(sqlGroup, id, (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        console.log("result: ", result);
+        
+        fcm.sendMessageToGroup(
+          result[0].group_id,
+          "예정된 " + result[0].title + " 일과가 완료되었습니다!",
+          result[0].group_id
+        );
+
+        console.log("to firebase");
+      }
+    })
+  });
   function doneReport() {
     res.json({
       code: resultCode,
