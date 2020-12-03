@@ -9,6 +9,7 @@ const db = mysql.createConnection(dbconfig);
 var path = require("path");
 const multer = require("multer");
 const multerconfig = require("../config/multer.js");
+const { group } = require("console");
 storage = multer.diskStorage(multerconfig);
 
 router.get("/group", (req, res) => {
@@ -133,14 +134,16 @@ router.get("/home", (req, res) => {
     }
     return temp_list;
   }
-  if (tab == "F"){
+  if (tab == "F") {
     var sqlPost =
-    "SELECT A.* FROM homekippa.Post A LEFT JOIN homekippa.Followrelation B on A.group_id = B.to_id WHERE B.from_id = ?;";
+      "SELECT A.* FROM homekippa.Post A LEFT JOIN homekippa.Followrelation B on A.group_id = B.to_id WHERE B.from_id = ?  ORDER BY `date` DESC;";
+  } else {
+    var sqlPost =
+      "SELECT * FROM homekippa.Post WHERE `area` = '" +
+      area +
+      "' ORDER BY `date` DESC";
   }
-  else {
-    var sqlPost = "SELECT * FROM homekippa.Post WHERE `area` = '" + area+"' ORDER BY `date` DESC";
-  }
-console.log(sqlPost);
+  console.log(sqlPost);
   //Execute
   getPostData(sqlPost)
     .then(function (data) {
@@ -149,9 +152,11 @@ console.log(sqlPost);
     .then(function (data) {
       postList = data;
       groupList = getGroupData(data);
+
       return groupList;
     })
     .then(function (data) {
+      console.log(groupList);
       groupList = data;
       likeList = getLikeData(postList);
       return likeList;
