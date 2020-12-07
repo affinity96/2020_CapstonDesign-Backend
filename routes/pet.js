@@ -1,4 +1,5 @@
 var express = require("express");
+var fcm = require("../functions/firebase");
 var router = express.Router();
 
 var webdriver = require("selenium-webdriver");
@@ -181,7 +182,7 @@ router.post(
   var group_id = req.body.GroupId;
   var name = req.body.petName;
   var birth = req.body.petBirth; //
-  var image = path.join(__dirname, "..", "images/") + req.file.filename;
+  var image = "./images/" + req.file.filename;
   var species = req.body.petSpecies; // 종
   var reg_num = req.body.petRegNum; // 등록번호
   var gender = req.body.petGender; // 성
@@ -241,7 +242,7 @@ router.post("/add/des", (req, res) => {
   var group_id = req.body.GroupId;
   var name = req.body.petName;
   var birth = req.body.petBirth; //
-  var image = path.join(__dirname, "..", "images/") + "dog_profile_default.jpeg";
+  var image = "./images/" + "pet_profile_default.jpg";
   var species = req.body.petSpecies; // 종
   var reg_num = req.body.petRegNum; // 등록번호
   var gender = req.body.petGender; // 성
@@ -370,8 +371,6 @@ router.put("/reports/done", (req, res) => {
 
   var id = req.query.id;
   console.log("이게..", id);
-  var resultCode = 404;
-  var message = "에러 발생";
   var curTime = new Date();
   var hour = curTime.getHours();
   var min = curTime.getMinutes();
@@ -396,21 +395,38 @@ router.put("/reports/done", (req, res) => {
         if (err) {
           console.log(err);
           console.log("에러?")
+          doneReport(404, "에러 발생");
         } else {
-          resultCode = 200;
-          message = "일과완료성공";
           console.log("성공?")
-          doneReport();
+          doneReport(200, "일과완료성공");
         }
       }
     );
   }
-  updateData();
-  function doneReport() {
+  updateData().then(() => {
+    var sqlGroup = "SELECT title, group_id FROM homekippa.Report WHERE id = ?"
+    db.query(sqlGroup, id, (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        console.log("result: ", result);
+        
+        fcm.sendMessageToGroup(
+          result[0].group_id,
+          "예정된 " + result[0].title + " 일과가 완료되었습니다!",
+          result[0].group_id
+        );
+
+        console.log("to firebase");
+      }
+    })
+  });
+
+  function doneReport(resultCode, message) {
     res.json({
       code: resultCode,
       message: message,
-    });
+    })
   }
 });
 

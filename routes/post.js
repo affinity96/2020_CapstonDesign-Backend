@@ -238,7 +238,7 @@ router.post(
     var user_id = req.body.userId;
     var title = req.body.title;
     var content = req.body.content;
-    var image = path.join(__dirname, "..", "images/") + req.file.filename;
+    var image = "./images/" + req.file.filename;
 
     console.log("ㄸ호잉또잉", req.body);
     async function insertData() {
