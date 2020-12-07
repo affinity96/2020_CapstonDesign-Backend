@@ -233,7 +233,7 @@ router.post(
     var id = req.query.groupId;
     var resultCode = 404;
     var message = "에러 발생";
-
+    var area = req.body.area;
     var group_id = req.body.groupId;
     var user_id = req.body.userId;
     var title = req.body.title;
@@ -243,10 +243,10 @@ router.post(
     console.log("ㄸ호잉또잉", req.body);
     async function insertData() {
       var sqlInsert =
-        "INSERT INTO homekippa.Post (group_id, user_id, title, content, image, `date`, like_num, comment_num, scope) VALUES (?, ?, ?, ?, ?, ? ,? ,?, ?);";
+        "INSERT INTO homekippa.Post (group_id, user_id, title, content, image, `date`, like_num, comment_num, scope, area) VALUES (?, ?, ?, ?, ?, ? ,? ,?, ?, ?);";
       db.query(
         sqlInsert,
-        [group_id, user_id, title, content, image, new Date(), 0, 0, "ALL"],
+        [group_id, user_id, title, content, image, new Date(), 0, 0, 0, area],
         (err, result) => {
           if (err) {
             console.log(err);
@@ -284,7 +284,7 @@ router.post("/add", (req, res) => {
       "INSERT INTO homekippa.Post (group_id, user_id, title, content, `date`, like_num, comment_num, scope, area) VALUES (?, ?, ?, ?, ? ,? ,?, ?, ?);";
     db.query(
       sqlInsert,
-      [group_id, user_id, title, content, new Date(), 0, 0, "ALL", area],
+      [group_id, user_id, title, content, new Date(), 0, 0, 0, area],
       (err, result) => {
         if (err) {
           console.log(err);
