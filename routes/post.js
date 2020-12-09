@@ -246,7 +246,7 @@ router.post(
         "INSERT INTO homekippa.Post (group_id, user_id, title, content, image, `date`, like_num, comment_num, scope) VALUES (?, ?, ?, ?, ?, ? ,? ,?, ?);";
       db.query(
         sqlInsert,
-        [group_id, user_id, title, content, image, new Date(), 0, 0, "ALL"],
+        [group_id, user_id, title, content, image, new Date(), 0, 0, 0],
         (err, result) => {
           if (err) {
             console.log(err);
@@ -284,7 +284,7 @@ router.post("/add", (req, res) => {
       "INSERT INTO homekippa.Post (group_id, user_id, title, content, `date`, like_num, comment_num, scope, area) VALUES (?, ?, ?, ?, ? ,? ,?, ?, ?);";
     db.query(
       sqlInsert,
-      [group_id, user_id, title, content, new Date(), 0, 0, "ALL", area],
+      [group_id, user_id, title, content, new Date(), 0, 0, 0, area],
       (err, result) => {
         if (err) {
           console.log(err);
