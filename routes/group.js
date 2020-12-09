@@ -35,15 +35,41 @@ router.get("/", (req, res) => {
           image: result[0].image,
           address: result[0].address,
           introduction: result[0].introduction,
-          background: result[0].cover,
+          cover: result[0].cover,
           tag: result[0].tag,
-          area:result[0].area
+          area: result[0].area,
         });
       }
     });
   }
 
   queryData().then(function () {
+    console.log(id);
+  });
+});
+
+router.get("/member", (req, res) => {
+  var groupid = req.query.groupId;
+  var memberList = [];
+  var resultCode = 404;
+  var message = "에러 발생";
+
+  async function getMemberData() {
+    var sql = "SELECT * FROM homekippa.User WHERE group_id = ? ";
+    db.query(sql, groupid, (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        console.log(result);
+        memberList = result;
+        resultCode = 200;
+        message = "그룹 정보 GET 성공";
+        res.json(result);
+      }
+    });
+  }
+
+  getMemberData().then(function () {
     console.log(id);
   });
 });
@@ -138,6 +164,7 @@ router.post("/invite/accept", (req, res) => {
 });
 
 router.get("/image", (req, res) => {
+  console.log("api,,,,,,,,");
   console.log(req.query.apiName);
   var filePath = req.query.apiName;
 
