@@ -305,4 +305,33 @@ router.post("/add", (req, res) => {
   }
 });
 
+
+router.put("/delete", (req, res) => {
+  var post_id = req.query.postId;
+ console.log("내일내일", post_id);
+  async function deleteData() {
+    var sqlDelete =
+      "DELETE from homekippa.Post where id = "+post_id;
+    db.query(
+      sqlDelete,
+      (err, result) => {
+        if (err) {
+          console.log(err);
+        } else {
+          resultCode = 200;
+          message = "게시글삭제성공";
+          deletePost();
+        }
+      }
+    );
+  }
+  deleteData();
+  function deletePost() {
+    res.json({
+      code: resultCode,
+      message: message,
+    });
+  }
+});
+
 module.exports = router;
