@@ -80,6 +80,7 @@ router.get("/group", (req, res) => {
 });
 
 router.get("/home", (req, res) => {
+  console.log("momoling");
   var groupid = req.query.groupId;
   var tab = req.query.tab_;
   var area = req.query.area;
@@ -134,6 +135,13 @@ router.get("/home", (req, res) => {
     }
     return temp_list;
   }
+
+  //여기서 scope결정하는 것도 추가했으면 좋겠는데 어떻게 하지?
+  //여기만 추가하면 될듯 scope = 0 : wholeScope / scope = 1 : followScope / scope = 2 : closedScope
+  //만약 scope가 0 일 때는 tab F하고 L 둘 다 됨
+  //만약 scope가 1 일 때는 tab F만 됨
+  //만약 scope가 0 일 때는 tab F하고 L 둘 다 안된다.
+
   if (tab == "F") {
     var sqlPost =
       "SELECT A.* FROM homekippa.Post A LEFT JOIN homekippa.Followrelation B on A.group_id = B.to_id WHERE B.from_id = ?  ORDER BY `date` DESC;";
@@ -163,6 +171,7 @@ router.get("/home", (req, res) => {
     })
     .then(function (data) {
       likeList = data;
+      console.log(data);
 
       resultCode = 200;
       message = "data get 성공";
