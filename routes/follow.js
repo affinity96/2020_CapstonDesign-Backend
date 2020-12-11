@@ -38,6 +38,7 @@ router.get("/getFollow", (req, res) => {
     })
     .then(function (data) {
       followerList = data.map(a => a.from_id);
+      console.log("here");
       console.log(followerList);
       var sqlSelect =
         "SELECT to_id FROM homekippa.Followrelation Where from_id =? order by to_id asc;";
@@ -45,6 +46,7 @@ router.get("/getFollow", (req, res) => {
     })
     .then(function (data) {
       followingList = data.map(a => a.to_id);
+      console.log("here");
       console.log(followingList);
 
       res.json({

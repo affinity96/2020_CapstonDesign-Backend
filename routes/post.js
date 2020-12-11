@@ -80,6 +80,7 @@ router.get("/group", (req, res) => {
 });
 
 router.get("/home", (req, res) => {
+  console.log("momoling");
   var groupid = req.query.groupId;
   var tab = req.query.tab_;
   var area = req.query.area;
@@ -134,6 +135,13 @@ router.get("/home", (req, res) => {
     }
     return temp_list;
   }
+
+  //여기서 scope결정하는 것도 추가했으면 좋겠는데 어떻게 하지?
+  //여기만 추가하면 될듯 scope = 0 : wholeScope / scope = 1 : followScope / scope = 2 : closedScope
+  //만약 scope가 0 일 때는 tab F하고 L 둘 다 됨
+  //만약 scope가 1 일 때는 tab F만 됨
+  //만약 scope가 0 일 때는 tab F하고 L 둘 다 안된다.
+
   if (tab == "F") {
     var sqlPost =
       "SELECT A.* FROM homekippa.Post A LEFT JOIN homekippa.Followrelation B on A.group_id = B.to_id WHERE B.from_id = ?  ORDER BY `date` DESC;";
@@ -163,6 +171,7 @@ router.get("/home", (req, res) => {
     })
     .then(function (data) {
       likeList = data;
+      console.log(data);
 
       resultCode = 200;
       message = "data get 성공";
@@ -244,6 +253,15 @@ router.post(
     var title = req.body.title;
     var content = req.body.content;
     var image = "./images/" + req.file.filename;
+    var scope = req.body.scope;
+
+    if(scope == "wholeScope"){
+      scope = 0;
+    }else if(scope == "followScope"){
+      scope = 1;
+    }else if(scope == "closedScope"){
+      scope = 2;
+    }
 
     console.log("ㄸ호잉또잉", req.body);
     async function insertData() {
@@ -251,7 +269,11 @@ router.post(
         "INSERT INTO homekippa.Post (group_id, user_id, title, content, image, `date`, like_num, comment_num, scope, area) VALUES (?, ?, ?, ?, ?, ? ,? ,?, ?, ?);";
       db.query(
         sqlInsert,
+<<<<<<< HEAD
+        [group_id, user_id, title, content, image, new Date(), 0, 0, scope],
+=======
         [group_id, user_id, title, content, image, new Date(), 0, 0, 0, area],
+>>>>>>> f58665802d445b7f21086e60e7c8a0ca1b3636d4
         (err, result) => {
           if (err) {
             console.log(err);
@@ -283,13 +305,23 @@ router.post("/add", (req, res) => {
   var title = req.body.title;
   var content = req.body.content;
 
+  var scope = req.body.scope;
+
+  if(scope == "wholeScope"){
+    scope = 0;
+  }else if(scope == "followScope"){
+    scope = 1;
+  }else if(scope == "closedScope"){
+    scope = 2;
+  }
+
   console.log("ㄸ호잉또잉", req.body);
   async function insertData() {
     var sqlInsert =
       "INSERT INTO homekippa.Post (group_id, user_id, title, content, `date`, like_num, comment_num, scope, area) VALUES (?, ?, ?, ?, ? ,? ,?, ?, ?);";
     db.query(
       sqlInsert,
-      [group_id, user_id, title, content, new Date(), 0, 0, 0, area],
+      [group_id, user_id, title, content, new Date(), 0, 0, scope, area],
       (err, result) => {
         if (err) {
           console.log(err);
