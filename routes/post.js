@@ -244,6 +244,15 @@ router.post(
     var title = req.body.title;
     var content = req.body.content;
     var image = "./images/" + req.file.filename;
+    var scope = req.body.scope;
+
+    if(scope == "wholeScope"){
+      scope = 0;
+    }else if(scope == "followScope"){
+      scope = 1;
+    }else if(scope == "closedScope"){
+      scope = 2;
+    }
 
     console.log("ㄸ호잉또잉", req.body);
     async function insertData() {
@@ -251,7 +260,7 @@ router.post(
         "INSERT INTO homekippa.Post (group_id, user_id, title, content, image, `date`, like_num, comment_num, scope) VALUES (?, ?, ?, ?, ?, ? ,? ,?, ?);";
       db.query(
         sqlInsert,
-        [group_id, user_id, title, content, image, new Date(), 0, 0, "ALL"],
+        [group_id, user_id, title, content, image, new Date(), 0, 0, scope],
         (err, result) => {
           if (err) {
             console.log(err);
@@ -283,13 +292,23 @@ router.post("/add", (req, res) => {
   var title = req.body.title;
   var content = req.body.content;
 
+  var scope = req.body.scope;
+
+  if(scope == "wholeScope"){
+    scope = 0;
+  }else if(scope == "followScope"){
+    scope = 1;
+  }else if(scope == "closedScope"){
+    scope = 2;
+  }
+
   console.log("ㄸ호잉또잉", req.body);
   async function insertData() {
     var sqlInsert =
       "INSERT INTO homekippa.Post (group_id, user_id, title, content, `date`, like_num, comment_num, scope, area) VALUES (?, ?, ?, ?, ? ,? ,?, ?, ?);";
     db.query(
       sqlInsert,
-      [group_id, user_id, title, content, new Date(), 0, 0, "ALL", area],
+      [group_id, user_id, title, content, new Date(), 0, 0, scope, area],
       (err, result) => {
         if (err) {
           console.log(err);
