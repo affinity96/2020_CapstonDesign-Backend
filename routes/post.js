@@ -247,7 +247,7 @@ router.post(
     var id = req.query.groupId;
     var resultCode = 404;
     var message = "에러 발생";
-
+    var area = req.body.area;
     var group_id = req.body.groupId;
     var user_id = req.body.userId;
     var title = req.body.title;
@@ -266,10 +266,14 @@ router.post(
     console.log("ㄸ호잉또잉", req.body);
     async function insertData() {
       var sqlInsert =
-        "INSERT INTO homekippa.Post (group_id, user_id, title, content, image, `date`, like_num, comment_num, scope) VALUES (?, ?, ?, ?, ?, ? ,? ,?, ?);";
+        "INSERT INTO homekippa.Post (group_id, user_id, title, content, image, `date`, like_num, comment_num, scope, area) VALUES (?, ?, ?, ?, ?, ? ,? ,?, ?, ?);";
       db.query(
         sqlInsert,
+<<<<<<< HEAD
         [group_id, user_id, title, content, image, new Date(), 0, 0, scope],
+=======
+        [group_id, user_id, title, content, image, new Date(), 0, 0, 0, area],
+>>>>>>> f58665802d445b7f21086e60e7c8a0ca1b3636d4
         (err, result) => {
           if (err) {
             console.log(err);
@@ -331,6 +335,35 @@ router.post("/add", (req, res) => {
   }
   insertData();
   function addNewPost() {
+    res.json({
+      code: resultCode,
+      message: message,
+    });
+  }
+});
+
+
+router.put("/delete", (req, res) => {
+  var post_id = req.query.postId;
+ console.log("내일내일", post_id);
+  async function deleteData() {
+    var sqlDelete =
+      "DELETE from homekippa.Post where id = "+post_id;
+    db.query(
+      sqlDelete,
+      (err, result) => {
+        if (err) {
+          console.log(err);
+        } else {
+          resultCode = 200;
+          message = "게시글삭제성공";
+          deletePost();
+        }
+      }
+    );
+  }
+  deleteData();
+  function deletePost() {
     res.json({
       code: resultCode,
       message: message,

@@ -97,6 +97,36 @@ router.post("/add", (req, res) => {
   }
 });
 
+router.put("/delete", (req, res) => {
+  console.log("여기는...")
+  var userId = req.query.userId;
+  var resultCode = 404;
+  var message = "회원 탈퇴 에러 발생";
+  deleteData().then(function () {
+   
+    res.json({
+      code: resultCode,
+      message: message,
+    });
+  });
+
+  async function deleteData() {
+    var sql =
+      "DELETE FROM User WHERE id = '" + userId+"'";
+    console.log("온거맞냐")
+    db.query(sql,(err, result) => {
+      if (err) {
+        console.log(err);
+        
+      } else {
+        resultCode = 200;
+        message = "회원 탈퇴 성공";
+      }
+    });
+  }
+});
+
+
 router.get("/group", (req, res) => {
   var id = req.query.groupId;
   var resultCode = 404;
