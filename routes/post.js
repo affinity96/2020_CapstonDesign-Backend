@@ -80,6 +80,7 @@ router.get("/group", (req, res) => {
 });
 
 router.get("/home", (req, res) => {
+  console.log("momoling");
   var groupid = req.query.groupId;
   var tab = req.query.tab_;
   var area = req.query.area;
@@ -134,14 +135,21 @@ router.get("/home", (req, res) => {
     }
     return temp_list;
   }
+
+  //여기서 scope결정하는 것도 추가했으면 좋겠는데 어떻게 하지?
+  //여기만 추가하면 될듯 scope = 0 : wholeScope / scope = 1 : followScope / scope = 2 : closedScope
+  //만약 scope가 0 일 때는 tab F하고 L 둘 다 됨
+  //만약 scope가 1 일 때는 tab F만 됨
+  //만약 scope가 2 일 때는 tab F하고 L 둘 다 안된다.
+
   if (tab == "F") {
     var sqlPost =
-      "SELECT A.* FROM homekippa.Post A LEFT JOIN homekippa.Followrelation B on A.group_id = B.to_id WHERE B.from_id = ?  ORDER BY `date` DESC;";
+      "SELECT A.* FROM homekippa.Post A LEFT JOIN homekippa.Followrelation B on A.group_id = B.to_id WHERE B.from_id = ? AND `scope` != 2 ORDER BY `date` DESC;";
   } else {
     var sqlPost =
       "SELECT * FROM homekippa.Post WHERE `area` = '" +
       area +
-      "' ORDER BY `date` DESC";
+      "' AND `scope` !=2 ORDER BY `date` DESC";
   }
   console.log(sqlPost);
   //Execute
@@ -163,6 +171,7 @@ router.get("/home", (req, res) => {
     })
     .then(function (data) {
       likeList = data;
+      console.log(data);
 
       resultCode = 200;
       message = "data get 성공";
@@ -238,20 +247,29 @@ router.post(
     var id = req.query.groupId;
     var resultCode = 404;
     var message = "에러 발생";
-
+    var area = req.body.area;
     var group_id = req.body.groupId;
     var user_id = req.body.userId;
     var title = req.body.title;
     var content = req.body.content;
     var image = "./images/" + req.file.filename;
+    var scope = req.body.scope;
+
+    if(scope == "wholeScope"){
+      scope = 0;
+    }else if(scope == "followScope"){
+      scope = 1;
+    }else if(scope == "closedScope"){
+      scope = 2;
+    }
 
     console.log("ㄸ호잉또잉", req.body);
     async function insertData() {
       var sqlInsert =
-        "INSERT INTO homekippa.Post (group_id, user_id, title, content, image, `date`, like_num, comment_num, scope) VALUES (?, ?, ?, ?, ?, ? ,? ,?, ?);";
+        "INSERT INTO homekippa.Post (group_id, user_id, title, content, image, `date`, like_num, comment_num, scope, area) VALUES (?, ?, ?, ?, ?, ? ,? ,?, ?, ?);";
       db.query(
         sqlInsert,
-        [group_id, user_id, title, content, image, new Date(), 0, 0, 0],
+        [group_id, user_id, title, content, image, new Date(), 0, 0, scope,area],
         (err, result) => {
           if (err) {
             console.log(err);
@@ -283,13 +301,23 @@ router.post("/add", (req, res) => {
   var title = req.body.title;
   var content = req.body.content;
 
+  var scope = req.body.scope;
+
+  if(scope == "wholeScope"){
+    scope = 0;
+  }else if(scope == "followScope"){
+    scope = 1;
+  }else if(scope == "closedScope"){
+    scope = 2;
+  }
+
   console.log("ㄸ호잉또잉", req.body);
   async function insertData() {
     var sqlInsert =
       "INSERT INTO homekippa.Post (group_id, user_id, title, content, `date`, like_num, comment_num, scope, area) VALUES (?, ?, ?, ?, ? ,? ,?, ?, ?);";
     db.query(
       sqlInsert,
-      [group_id, user_id, title, content, new Date(), 0, 0, 0, area],
+      [group_id, user_id, title, content, new Date(), 0, 0, scope, area],
       (err, result) => {
         if (err) {
           console.log(err);
@@ -303,6 +331,35 @@ router.post("/add", (req, res) => {
   }
   insertData();
   function addNewPost() {
+    res.json({
+      code: resultCode,
+      message: message,
+    });
+  }
+});
+
+
+router.put("/delete", (req, res) => {
+  var post_id = req.query.postId;
+ console.log("내일내일", post_id);
+  async function deleteData() {
+    var sqlDelete =
+      "DELETE from homekippa.Post where id = "+post_id;
+    db.query(
+      sqlDelete,
+      (err, result) => {
+        if (err) {
+          console.log(err);
+        } else {
+          resultCode = 200;
+          message = "게시글삭제성공";
+          deletePost();
+        }
+      }
+    );
+  }
+  deleteData();
+  function deletePost() {
     res.json({
       code: resultCode,
       message: message,
