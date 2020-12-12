@@ -303,6 +303,7 @@ router.post("/add", (req, res) => {
 
   var scope = req.body.scope;
 
+
   if(scope == "wholeScope"){
     scope = 0;
   }else if(scope == "followScope"){
@@ -310,6 +311,8 @@ router.post("/add", (req, res) => {
   }else if(scope == "closedScope"){
     scope = 2;
   }
+
+
 
   console.log("ㄸ호잉또잉", req.body);
   async function insertData() {
