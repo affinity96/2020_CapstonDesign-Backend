@@ -339,7 +339,7 @@ router.post("/reports/add", (req, res) => {
   var desc = req.body.dailyWorkDesc;
   var time = req.body.dailyWorkTime;
   var resultCode = 404;
-  var message = "에러 발생";
+  var message = "일과 추가 에러 발생";
 
   async function insertData() {
     var sqlInsert =
@@ -352,7 +352,7 @@ router.post("/reports/add", (req, res) => {
           console.log(err);
         } else {
           resultCode = 200;
-          message = "그룹추가성공";
+          message = "일과 추가성공";
           addNewReport();
         }
       }
@@ -360,6 +360,42 @@ router.post("/reports/add", (req, res) => {
   }
   insertData();
   function addNewReport() {
+    res.json({
+      code: resultCode,
+      message: message,
+    });
+  }
+});
+
+router.post("/reports/update", (req, res) => {
+
+  var id = req.body.id;
+  var title = req.body.dailyWorkName;
+  var alarm = req.body.dailyWorkAlarm;
+  var desc = req.body.dailyWorkDesc;
+  var time = req.body.dailyWorkTime;
+  var resultCode = 404;
+  var message = "일과 수정 에러 발생";
+  console.log(id, title, alarm, desc, time)
+  async function updateData() {
+    console.log("왔나용?")
+    var sqlUpdate =
+      "UPDATE homekippa.Report SET title ='"+title+"', alarm = '"+alarm+"', `desc` = '"+desc+"', `time` = '"+time+"' WHERE id = "+id+";";
+    db.query(
+      sqlUpdate,
+      (err, result) => {
+        if (err) {
+          console.log(err);
+        } else {
+          resultCode = 200;
+          message = "일과 수정 성공";
+          editReport();
+        }
+      }
+    );
+  }
+  updateData();
+  function editReport() {
     res.json({
       code: resultCode,
       message: message,
