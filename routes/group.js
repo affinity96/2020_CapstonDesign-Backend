@@ -114,6 +114,47 @@ router.post("/invite", (req, res) => {
 
   insertData(from_group.id, to_user.id);
 });
+router.post("/selectInvite", (req, res) => {
+  var invitation=[];
+  var result_check = "nothing";
+  var from_group = req.body.from_group;
+  var message = "에러";
+  var resultCode = "404"
+  var to_user = req.body.to_user;
+  console.log(from_group.id);
+  async function getData(){
+    var sql="SELECT * FROM GroupInvite WHERE from_group = ?";
+    db.query(
+      sql,
+      from_group.id,
+      (err, result) => {
+        if (err) {
+          console.log("데이터 가져오기 실패", err);
+        } else {
+          console.log("데이터 가져오기 성공! ", result);
+          resultCode = 200;
+          message = " GET 성공";
+          if(result[0] == undefined){
+            result_check = "false";
+
+          }else{
+            result_check = "true";
+          }
+
+          console.log(result_check);
+
+          res.json({
+            code: resultCode,
+            message: message,
+            result: result_check
+          });
+        }
+      }
+    );
+  }
+
+  getData();
+});
 
 router.post("/invite/accept", (req, res) => {
   var from_group = req.body.from_group;
@@ -136,13 +177,14 @@ router.post("/invite/accept", (req, res) => {
           console.log("수락 성공", result);
           resultCode = 200;
           message = "유저정보 GET 성공";
-          name = result[2].name;
-          id = result[2].id;
-          group_id = result[2].group_id;
-          image = result[2].image;
-          birth = result[2].birth;
-          phone = result[2].phone;
-          email = result[2].email;
+          name = result[2][0].name;
+          id = result[2][0].id;
+          group_id = result[2][0].group_id;
+          image = result[2][0].image;
+          birth = result[2][0].birth;
+          phone = result[2][0].phone;
+          email = result[2][0].email;
+
 
           res.json({
             code: resultCode,
@@ -256,7 +298,7 @@ router.post(
       var image = path.join(__dirname, "..", "images/") + req.file.filename;
       var resultCode = 404;
       var message = "에러 발생";
-  
+
       function updateData() {
         var sqlUpdate = "UPDATE homekippa.Group SET image = ? WHERE id = ?";
         db.query(sqlUpdate, [image, id], (err, result) => {
@@ -269,7 +311,7 @@ router.post(
           }
         });
       }
-  
+
       function send() {
         console.log(req.file);
         console.log(req.body);
@@ -278,16 +320,16 @@ router.post(
           message: message,
         });
       }
-  
+
       updateData();
     });
-  
+
     router.post("/reset/photo", (req, res) => {
       var id = req.query.groupId;
       var image = path.join(__dirname, "..", "images/") + "group_profile_default.jpg";
       var resultCode = 404;
       var message = "에러 발생";
-  
+
       function updateData() {
         var sqlUpdate = "UPDATE homekippa.Group SET image = ? WHERE id = ?";
         db.query(sqlUpdate, [image, id], (err, result) => {
@@ -300,7 +342,7 @@ router.post(
           }
         });
       }
-  
+
       function send() {
         console.log(req.query);
         res.json({
@@ -308,7 +350,7 @@ router.post(
           message: message,
         });
       }
-  
+
       updateData();
     });
 
@@ -317,7 +359,7 @@ router.post(
       var name = req.query.Name;
       var resultCode = 404;
       var message = "에러 발생";
-  
+
       function updateData() {
         var sqlUpdate = "UPDATE homekippa.Group SET name = ? WHERE id = ?";
         db.query(sqlUpdate, [name, id], (err, result) => {
@@ -330,7 +372,7 @@ router.post(
           }
         });
       }
-  
+
       function send() {
         console.log(req.query);
         res.json({
@@ -338,7 +380,7 @@ router.post(
           message: message,
         });
       }
-  
+
       updateData();
     });
 
@@ -347,7 +389,7 @@ router.post(
       var intro = req.query.Intro;
       var resultCode = 404;
       var message = "에러 발생";
-  
+
       function updateData() {
         var sqlUpdate = "UPDATE homekippa.Group SET introduction = ? WHERE id = ?";
         db.query(sqlUpdate, [intro, id], (err, result) => {
@@ -360,7 +402,7 @@ router.post(
           }
         });
       }
-  
+
       function send() {
         console.log(req.query);
         res.json({
@@ -368,7 +410,7 @@ router.post(
           message: message,
         });
       }
-  
+
       updateData();
     });
 
@@ -378,7 +420,7 @@ router.post(
       var area = req.query.Area;
       var resultCode = 404;
       var message = "에러 발생";
-  
+
       function updateData() {
         var sqlUpdate = "UPDATE homekippa.Group SET address = ?, area = ? WHERE id = ?";
         db.query(sqlUpdate, [address, area, id], (err, result) => {
@@ -391,7 +433,7 @@ router.post(
           }
         });
       }
-  
+
       function send() {
         console.log(req.query);
         res.json({
@@ -399,7 +441,7 @@ router.post(
           message: message,
         });
       }
-  
+
       updateData();
     });
 
