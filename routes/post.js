@@ -304,6 +304,7 @@ router.post("/add", (req, res) => {
   var scope = req.body.scope;
 
 
+
   if(scope == "wholeScope"){
     scope = 0;
   }else if(scope == "followScope"){
