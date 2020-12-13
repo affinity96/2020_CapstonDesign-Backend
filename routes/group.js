@@ -579,4 +579,28 @@ router.post("/add", (req, res) => {
   checkDuplication();
 });
 
+router.get("/list/filter", (req, res) => {
+  var filter = '%' + req.query.searchFilter + '%';
+  var resultCode = 404;
+  var message = "에러 발생";
+
+  console.log(filter);
+  async function queryData() {
+    var sqlSelect = "SELECT * FROM homekippa.Group WHERE (name LIKE ?)";
+    db.query(sqlSelect, filter, (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        console.log("result: ", result);
+        resultCode = 200;
+        message = "그룹 정보 GET 성공";
+
+        res.json(result);
+      }
+    });
+  }
+
+  queryData();
+});
+
 module.exports = router;
