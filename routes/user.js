@@ -15,6 +15,7 @@ router.get("/", (req, res) => {
   var birth = "";
   var phone = "";
   var email = "";
+  var tokken = "";
   var gender;
   var resultCode = 404;
   var message = "에러 발생";
@@ -41,7 +42,7 @@ router.get("/", (req, res) => {
             phone = result[0].phone;
             email = result[0].email;
             gender = result[0].gender;
-
+            tokken = result[0].tokken;
 
             res.json({
               code: resultCode,
@@ -54,6 +55,7 @@ router.get("/", (req, res) => {
               phone,
               email,
               gender,
+              tokken
             });
           }
         });
@@ -126,7 +128,41 @@ router.put("/delete", (req, res) => {
   }
 });
 
+router.post("/update", (req, res) => {
 
+  var id = req.body.id;
+  var name = req.body.name;
+  var phone = req.body.phone;
+
+  console.log(id, name, phone);
+  var resultCode = 404;
+  var message = "일과 수정 에러 발생";
+
+  async function updateData() {
+    console.log("왔나용가리?")
+    var sqlUpdate =
+      "UPDATE homekippa.User SET name ='"+name+"', phone = '"+phone+"' WHERE id = '"+id+"' ;";
+    db.query(
+      sqlUpdate,
+      (err, result) => {
+        if (err) {
+          console.log(err);
+        } else {
+          resultCode = 200;
+          message = "일과 수정 성공";
+          editUser();
+        }
+      }
+    );
+  }
+  updateData();
+  function editUser() {
+    res.json({
+      code: resultCode,
+      message: message,
+    });
+  }
+});
 router.get("/group", (req, res) => {
   var id = req.query.groupId;
   var resultCode = 404;
