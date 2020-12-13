@@ -138,7 +138,12 @@ router.post("/selectInvite", (req, res) => {
             result_check = "false";
 
           }else{
-            result_check = "true";
+            if(result[0].to_user == to_user.id){
+              result_check = "true";
+            }else{
+              result_check = "false";
+            }
+
           }
 
           console.log(result_check);

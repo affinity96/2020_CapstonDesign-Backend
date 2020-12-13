@@ -248,7 +248,7 @@ router.post("/add/des", (req, res) => {
   var message = "에러 발생";
 
   if(neutrality == '중성'){
-    console.log("here");
+    neutrality = 1;
   }else{
     neutrality = 0;
   }
