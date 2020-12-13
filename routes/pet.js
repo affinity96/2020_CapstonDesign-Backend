@@ -38,6 +38,7 @@ router.get("/", (req, res) => {
       if (err) {
         console.log(err);
       } else {
+        console.log("petBirth");
         console.log(result);
         resultCode = 200;
         message = "펫 정보 GET 성공";
@@ -191,18 +192,14 @@ router.post(
   var message = "에러 발생";
 
   if(neutrality == '중성'){
-    console.log("here");
     neutrality = 1;
   }else{
-    console.log("here2");
     neutrality = 0;
   }
 
   if(gender == '수컷'){
-    console.log("here3");
     gender = 1;
   }else{
-    console.log("here4");
     gender =0;
   }
 
@@ -252,17 +249,13 @@ router.post("/add/des", (req, res) => {
 
   if(neutrality == '중성'){
     console.log("here");
-    neutrality = 1;
   }else{
-    console.log("here2");
     neutrality = 0;
   }
 
   if(gender == '수컷'){
-    console.log("here3");
     gender = 1;
   }else{
-    console.log("here4");
     gender =0;
   }
 
@@ -308,7 +301,7 @@ router.get("/reports", (req, res) => {
 
         if (err) {
           console.log(err);
-        } else { 
+        } else {
           console.log("ㅣㄹ절트", result);
           resolve(result);
         }
@@ -416,15 +409,15 @@ router.put("/reports/done", (req, res) => {
   async function updateData() {
     var sqlUpdate =
       "UPDATE homekippa.Report SET `done` = 1 WHERE `id` = " + id + ";";
-    var sqlUpadte2 = 
+    var sqlUpadte2 =
       "UPDATE homekippa.Report SET `done_time` = '" + hour + ":"+ min + "' WHERE `id` = "+id + ";";
-    var sqlUpdate3 = 
+    var sqlUpdate3 =
       "UPDATE homekippa.Report SET `done_user_id` = '" +done_user_id + "' WHERE `id` = " + id + ";";
-    var sqlUpdate4 = 
+    var sqlUpdate4 =
       "UPDATE homekippa.Report SET `done_user_image` = '" +done_user_image + "' WHERE `id` = " + id + ";";
 
 
-     
+
     db.query(
       sqlUpdate + sqlUpadte2 + sqlUpdate3 + sqlUpdate4,
       (err, result) => {
@@ -446,7 +439,7 @@ router.put("/reports/done", (req, res) => {
         console.log(err);
       } else {
         console.log("result: ", result);
-        
+
         fcm.sendMessageToGroup(
           result[0].group_id,
           "예정된 " + result[0].title + " 일과가 완료되었습니다!",
@@ -596,7 +589,7 @@ router.post(
     var id = req.query.petId;
     var gender = req.query.gender;
     var resultCode = 404;
-    var message = "에러 발생";    
+    var message = "에러 발생";
 
     if(gender == '수컷'){
       gender = 1;
@@ -676,6 +669,8 @@ router.post(
         if (err) {
           console.log(err);
         } else {
+          console.log("petbirth")
+          console.log(birth);
           resultCode = 200;
           message = "생일 변경 성공";
           send();
