@@ -246,6 +246,163 @@ router.post(
     updateData();
   });
 
+  router.post(
+    "/modify/photo",
+    multer({
+      storage: storage,
+    }).single("upload"),
+    (req, res) => {
+      var id = req.body.groupId;
+      var image = path.join(__dirname, "..", "images/") + req.file.filename;
+      var resultCode = 404;
+      var message = "에러 발생";
+  
+      function updateData() {
+        var sqlUpdate = "UPDATE homekippa.Group SET image = ? WHERE id = ?";
+        db.query(sqlUpdate, [image, id], (err, result) => {
+          if (err) {
+            console.log(err);
+          } else {
+            resultCode = 200;
+            message = "이미지변경 성공";
+            send();
+          }
+        });
+      }
+  
+      function send() {
+        console.log(req.file);
+        console.log(req.body);
+        res.json({
+          code: resultCode,
+          message: message,
+        });
+      }
+  
+      updateData();
+    });
+  
+    router.post("/reset/photo", (req, res) => {
+      var id = req.query.groupId;
+      var image = path.join(__dirname, "..", "images/") + "group_profile_default.jpg";
+      var resultCode = 404;
+      var message = "에러 발생";
+  
+      function updateData() {
+        var sqlUpdate = "UPDATE homekippa.Group SET image = ? WHERE id = ?";
+        db.query(sqlUpdate, [image, id], (err, result) => {
+          if (err) {
+            console.log(err);
+          } else {
+            resultCode = 200;
+            message = "이미지변경 성공";
+            send();
+          }
+        });
+      }
+  
+      function send() {
+        console.log(req.query);
+        res.json({
+          code: resultCode,
+          message: message,
+        });
+      }
+  
+      updateData();
+    });
+
+    router.post("/modify/name", (req, res) => {
+      var id = req.query.groupId;
+      var name = req.query.Name;
+      var resultCode = 404;
+      var message = "에러 발생";
+  
+      function updateData() {
+        var sqlUpdate = "UPDATE homekippa.Group SET name = ? WHERE id = ?";
+        db.query(sqlUpdate, [name, id], (err, result) => {
+          if (err) {
+            console.log(err);
+          } else {
+            resultCode = 200;
+            message = "이름변경 성공";
+            send();
+          }
+        });
+      }
+  
+      function send() {
+        console.log(req.query);
+        res.json({
+          code: resultCode,
+          message: message,
+        });
+      }
+  
+      updateData();
+    });
+
+    router.post("/modify/intro", (req, res) => {
+      var id = req.query.groupId;
+      var intro = req.query.Intro;
+      var resultCode = 404;
+      var message = "에러 발생";
+  
+      function updateData() {
+        var sqlUpdate = "UPDATE homekippa.Group SET introduction = ? WHERE id = ?";
+        db.query(sqlUpdate, [intro, id], (err, result) => {
+          if (err) {
+            console.log(err);
+          } else {
+            resultCode = 200;
+            message = "설명변경 성공";
+            send();
+          }
+        });
+      }
+  
+      function send() {
+        console.log(req.query);
+        res.json({
+          code: resultCode,
+          message: message,
+        });
+      }
+  
+      updateData();
+    });
+
+    router.post("/modify/address", (req, res) => {
+      var id = req.query.groupId;
+      var address = req.query.Address;
+      var area = req.query.Area;
+      var resultCode = 404;
+      var message = "에러 발생";
+  
+      function updateData() {
+        var sqlUpdate = "UPDATE homekippa.Group SET address = ?, area = ? WHERE id = ?";
+        db.query(sqlUpdate, [address, area, id], (err, result) => {
+          if (err) {
+            console.log(err);
+          } else {
+            resultCode = 200;
+            message = "이름변경 성공";
+            send();
+          }
+        });
+      }
+  
+      function send() {
+        console.log(req.query);
+        res.json({
+          code: resultCode,
+          message: message,
+        });
+      }
+  
+      updateData();
+    });
+
 router.post(
   "/add/photo",
   multer({
@@ -420,6 +577,30 @@ router.post("/add", (req, res) => {
   }
 
   checkDuplication();
+});
+
+router.get("/list/filter", (req, res) => {
+  var filter = '%' + req.query.searchFilter + '%';
+  var resultCode = 404;
+  var message = "에러 발생";
+
+  console.log(filter);
+  async function queryData() {
+    var sqlSelect = "SELECT * FROM homekippa.Group WHERE (name LIKE ?)";
+    db.query(sqlSelect, filter, (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        console.log("result: ", result);
+        resultCode = 200;
+        message = "그룹 정보 GET 성공";
+
+        res.json(result);
+      }
+    });
+  }
+
+  queryData();
 });
 
 module.exports = router;

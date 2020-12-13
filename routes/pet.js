@@ -466,4 +466,232 @@ router.put("/reports/done", (req, res) => {
   }
 });
 
+router.post(
+  "/modify/photo",
+  multer({
+    storage: storage,
+  }).single("upload"),
+  (req, res) => {
+    var id = req.body.petId;
+    var image = path.join(__dirname, "..", "images/") + req.file.filename;
+    var resultCode = 404;
+    var message = "에러 발생";
+
+    function updateData() {
+      var sqlUpdate = "UPDATE homekippa.Pet SET image = ? WHERE id = ?";
+      db.query(sqlUpdate, [image, id], (err, result) => {
+        if (err) {
+          console.log(err);
+        } else {
+          resultCode = 200;
+          message = "이미지변경 성공";
+          send();
+        }
+      });
+    }
+
+    function send() {
+      console.log(req.file);
+      console.log(req.body);
+      res.json({
+        code: resultCode,
+        message: message,
+      });
+    }
+
+    updateData();
+  });
+
+  router.post("/reset/photo", (req, res) => {
+    var id = req.query.petId;
+    var image = path.join(__dirname, "..", "images/") + "pet_profile_default.jpg";
+    var resultCode = 404;
+    var message = "에러 발생";
+
+    function updateData() {
+      var sqlUpdate = "UPDATE homekippa.Pet SET image = ? WHERE id = ?";
+      db.query(sqlUpdate, [image, id], (err, result) => {
+        if (err) {
+          console.log(err);
+        } else {
+          resultCode = 200;
+          message = "이미지변경 성공";
+          send();
+        }
+      });
+    }
+
+    function send() {
+      console.log(req.query);
+      res.json({
+        code: resultCode,
+        message: message,
+      });
+    }
+
+    updateData();
+  });
+
+  router.post("/modify/name", (req, res) => {
+    var id = req.query.petId;
+    var name = req.query.name;
+    var resultCode = 404;
+    var message = "에러 발생";
+
+    function updateData() {
+      var sqlUpdate = "UPDATE homekippa.Pet SET name = ? WHERE id = ?";
+      db.query(sqlUpdate, [name, id], (err, result) => {
+        if (err) {
+          console.log(err);
+        } else {
+          resultCode = 200;
+          message = "이름변경 성공";
+          send();
+        }
+      });
+    }
+
+    function send() {
+      console.log(req.query);
+      res.json({
+        code: resultCode,
+        message: message,
+      });
+    }
+
+    updateData();
+  });
+
+  router.post("/modify/species", (req, res) => {
+    var id = req.query.petId;
+    var species = req.query.species;
+    var resultCode = 404;
+    var message = "에러 발생";
+
+    function updateData() {
+      var sqlUpdate = "UPDATE homekippa.Pet SET species = ? WHERE id = ?";
+      db.query(sqlUpdate, [species, id], (err, result) => {
+        if (err) {
+          console.log(err);
+        } else {
+          resultCode = 200;
+          message = "종변경 성공";
+          send();
+        }
+      });
+    }
+
+    function send() {
+      console.log(req.query);
+      res.json({
+        code: resultCode,
+        message: message,
+      });
+    }
+
+    updateData();
+  });
+
+  router.post("/modify/gender", (req, res) => {
+    var id = req.query.petId;
+    var gender = req.query.gender;
+    var resultCode = 404;
+    var message = "에러 발생";    
+
+    if(gender == '수컷'){
+      gender = 1;
+    } else {
+      gender = 0;
+    }
+
+    function updateData() {
+      var sqlUpdate = "UPDATE homekippa.Pet SET gender = ? WHERE id = ?";
+      db.query(sqlUpdate, [gender, id], (err, result) => {
+        if (err) {
+          console.log(err);
+        } else {
+          resultCode = 200;
+          message = "성별변경 성공";
+          send();
+        }
+      });
+    }
+
+    function send() {
+      console.log(req.query);
+      res.json({
+        code: resultCode,
+        message: message,
+      });
+    }
+
+    updateData();
+  });
+
+  router.post("/modify/neutering", (req, res) => {
+    var id = req.query.petId;
+    var neutrality = req.query.neutering;
+    var resultCode = 404;
+    var message = "에러 발생";
+
+    if(neutrality == '중성'){
+      neutrality = 1;
+    } else {
+      neutrality = 0;
+    }
+
+    function updateData() {
+      var sqlUpdate = "UPDATE homekippa.Pet SET neutrality = ? WHERE id = ?";
+      db.query(sqlUpdate, [neutrality, id], (err, result) => {
+        if (err) {
+          console.log(err);
+        } else {
+          resultCode = 200;
+          message = "중성화 여부 변경 성공";
+          send();
+        }
+      });
+    }
+
+    function send() {
+      console.log(req.query);
+      res.json({
+        code: resultCode,
+        message: message,
+      });
+    }
+
+    updateData();
+  });
+
+  router.post("/modify/birth", (req, res) => {
+    var id = req.query.petId;
+    var birth = req.query.birth;
+    var resultCode = 404;
+    var message = "에러 발생";
+
+    function updateData() {
+      var sqlUpdate = "UPDATE homekippa.Pet SET birth = ? WHERE id = ?";
+      db.query(sqlUpdate, [birth, id], (err, result) => {
+        if (err) {
+          console.log(err);
+        } else {
+          resultCode = 200;
+          message = "생일 변경 성공";
+          send();
+        }
+      });
+    }
+
+    function send() {
+      console.log(req.query);
+      res.json({
+        code: resultCode,
+        message: message,
+      });
+    }
+
+    updateData();
+  });
+
 module.exports = router;

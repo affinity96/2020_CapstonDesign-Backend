@@ -140,16 +140,16 @@ router.get("/home", (req, res) => {
   //여기만 추가하면 될듯 scope = 0 : wholeScope / scope = 1 : followScope / scope = 2 : closedScope
   //만약 scope가 0 일 때는 tab F하고 L 둘 다 됨
   //만약 scope가 1 일 때는 tab F만 됨
-  //만약 scope가 0 일 때는 tab F하고 L 둘 다 안된다.
+  //만약 scope가 2 일 때는 tab F하고 L 둘 다 안된다.
 
   if (tab == "F") {
     var sqlPost =
-      "SELECT A.* FROM homekippa.Post A LEFT JOIN homekippa.Followrelation B on A.group_id = B.to_id WHERE B.from_id = ?  ORDER BY `date` DESC;";
+      "SELECT A.* FROM homekippa.Post A LEFT JOIN homekippa.Followrelation B on A.group_id = B.to_id WHERE B.from_id = ? AND `scope` != 2 ORDER BY `date` DESC;";
   } else {
     var sqlPost =
       "SELECT * FROM homekippa.Post WHERE `area` = '" +
       area +
-      "' ORDER BY `date` DESC";
+      "' AND `scope` !=2 ORDER BY `date` DESC";
   }
   console.log(sqlPost);
   //Execute
