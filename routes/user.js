@@ -38,12 +38,12 @@ router.get("/", (req, res) => {
             name = result[0].name;
             group_id = result[0].group_id;
             image = result[0].image;
-            birth = result[0].birth;
+            var date = new Date(result[0].birth);
+            date.setHours(date.getHours()+9);
+            birth = date;
             phone = result[0].phone;
             email = result[0].email;
             gender = result[0].gender;
-            tokken = result[0].tokken;
-
             res.json({
               code: resultCode,
               message: message,
@@ -55,7 +55,7 @@ router.get("/", (req, res) => {
               phone,
               email,
               gender,
-              tokken
+              token
             });
           }
         });
