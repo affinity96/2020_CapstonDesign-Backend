@@ -19,7 +19,7 @@ router.get("/", (req, res) => {
   var birth = "";
   var phone = "";
   var email = "";
-  var tokken = "";
+  var token = "";
   var gender;
   var resultCode = 404;
   var message = "에러 발생";
@@ -175,15 +175,23 @@ router.post("/update", (req, res) => {
   var id = req.body.id;
   var name = req.body.name;
   var phone = req.body.phone;
+  var image = "./images/" + "group_profile_default.jpg";
+  var checkDefault = req.body.checkDefault;
+  if (checkDefault == 0) {
+    var sqlUpdate =
+    "UPDATE homekippa.User SET name ='"+name+"', phone = '"+phone+"' WHERE id = '"+id+"' ;";
+  } else {
+    var sqlUpdate =
+    "UPDATE homekippa.User SET name ='"+name+"', phone = '"+phone+"', image = '"+image+"' WHERE id = '"+id+"' ;";
+  }
 
-  console.log(id, name, phone);
+  console.log(id, name, phone, checkDefault, sqlUpdate);
   var resultCode = 404;
   var message = "일과 수정 에러 발생";
 
   async function updateData() {
     console.log("왔나용가리?")
-    var sqlUpdate =
-      "UPDATE homekippa.User SET name ='"+name+"', phone = '"+phone+"' WHERE id = '"+id+"' ;";
+    
     db.query(
       sqlUpdate,
       (err, result) => {
@@ -205,6 +213,46 @@ router.post("/update", (req, res) => {
     });
   }
 });
+
+router.post("/update/photo", multer({
+  storage: storage,
+}).single("upload"), (req, res) => {
+
+  var id = req.body.id;
+  var name = req.body.name;
+  var phone = req.body.phone;
+  var image = "./images/" + req.file.filename;
+
+  console.log(id, name, phone);
+  var resultCode = 404;
+  var message = "일과 수정 에러 발생";
+
+  async function updateData() {
+    console.log("왔나용가리?")
+    var sqlUpdate =
+    "UPDATE homekippa.User SET name ='"+name+"', phone = '"+phone+"', image = '"+image+"' WHERE id = '"+id+"' ;";
+    db.query(
+      sqlUpdate,
+      (err, result) => {
+        if (err) {
+          console.log(err);
+        } else {
+          resultCode = 200;
+          message = "일과 수정 성공";
+          editUser();
+        }
+      }
+    );
+  }
+  updateData();
+  function editUser() {
+    res.json({
+      code: resultCode,
+      message: message,
+    });
+  }
+});
+
 router.get("/group", (req, res) => {
   var id = req.query.groupId;
   var resultCode = 404;

@@ -229,7 +229,7 @@ router.post(
   }).single("upload"),
   (req, res) => {
     var id = req.body.groupId;
-    var cover = path.join(__dirname, "..", "images/") + req.file.filename;
+    var cover = "./images/" + req.file.filename;
     var resultCode = 404;
     var message = "에러 발생";
 
@@ -260,7 +260,7 @@ router.post(
 
   router.post("/reset/cover", (req, res) => {
     var id = req.query.groupId;
-    var cover = path.join(__dirname, "..", "images/") + "group_cover_default.jpeg";
+    var cover = "./images/" + "group_cover_default.jpeg";
     var resultCode = 404;
     var message = "에러 발생";
 
@@ -295,7 +295,7 @@ router.post(
     }).single("upload"),
     (req, res) => {
       var id = req.body.groupId;
-      var image = path.join(__dirname, "..", "images/") + req.file.filename;
+      var image = "./images/" + req.file.filename;
       var resultCode = 404;
       var message = "에러 발생";
 
@@ -326,7 +326,7 @@ router.post(
 
     router.post("/reset/photo", (req, res) => {
       var id = req.query.groupId;
-      var image = path.join(__dirname, "..", "images/") + "group_profile_default.jpg";
+      var image = "./images/" + "group_profile_default.jpg";
       var resultCode = 404;
       var message = "에러 발생";
 
