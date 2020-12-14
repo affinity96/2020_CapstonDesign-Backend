@@ -149,7 +149,7 @@ router.get("/home", (req, res) => {
     var sqlPost =
       "SELECT * FROM homekippa.Post WHERE `area` = '" +
       area +
-      "' AND `scope` !=2 ORDER BY `date` DESC";
+      "' AND `scope` =0 ORDER BY `date` DESC";
   }
   console.log(sqlPost);
   //Execute
