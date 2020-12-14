@@ -474,7 +474,7 @@ router.post(
   }).single("upload"),
   (req, res) => {
     var id = req.body.petId;
-    var image = path.join(__dirname, "..", "images/") + req.file.filename;
+    var image = "./images/" + req.file.filename;
     var resultCode = 404;
     var message = "에러 발생";
 
@@ -505,7 +505,7 @@ router.post(
 
   router.post("/reset/photo", (req, res) => {
     var id = req.query.petId;
-    var image = path.join(__dirname, "..", "images/") + "pet_profile_default.jpg";
+    var image = "./images/" + "pet_profile_default.jpg";
     var resultCode = 404;
     var message = "에러 발생";
 
