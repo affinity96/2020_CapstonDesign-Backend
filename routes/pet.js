@@ -40,13 +40,16 @@ router.get("/", (req, res) => {
       } else {
         console.log("petBirth");
         console.log(result);
+        if (result != "") { 
+          var date = new Date(result[0].birth);
+          date.setHours(date.getHours()+9);
+          result[0].birth = date;
+          console.log(result[0].birth);
+        }
         resultCode = 200;
         message = "펫 정보 GET 성공";
-        var date = new Date(result[0].birth);
-        date.setHours(date.getHours()+9);
-        result[0].birth = date;
 
-        console.log(result[0].birth);
+        
 
         res.json(result);
       }
