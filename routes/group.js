@@ -123,10 +123,10 @@ router.post("/selectInvite", (req, res) => {
   var to_user = req.body.to_user;
   console.log(from_group.id);
   async function getData(){
-    var sql="SELECT * FROM GroupInvite WHERE from_group = ?";
+    var sql="SELECT * FROM GroupInvite WHERE from_group = ? and to_user = ?";
     db.query(
       sql,
-      from_group.id,
+      [from_group.id, to_user.id],
       (err, result) => {
         if (err) {
           console.log("데이터 가져오기 실패", err);
@@ -138,12 +138,7 @@ router.post("/selectInvite", (req, res) => {
             result_check = "false";
 
           }else{
-            if(result[0].to_user == to_user.id){
-              result_check = "true";
-            }else{
-              result_check = "false";
-            }
-
+            result_check = "true";
           }
 
           console.log(result_check);
@@ -234,7 +229,7 @@ router.post(
   }).single("upload"),
   (req, res) => {
     var id = req.body.groupId;
-    var cover = path.join(__dirname, "..", "images/") + req.file.filename;
+    var cover = "./images/" + req.file.filename;
     var resultCode = 404;
     var message = "에러 발생";
 
@@ -265,7 +260,7 @@ router.post(
 
   router.post("/reset/cover", (req, res) => {
     var id = req.query.groupId;
-    var cover = path.join(__dirname, "..", "images/") + "group_cover_default.jpeg";
+    var cover = "./images/" + "group_cover_default.jpeg";
     var resultCode = 404;
     var message = "에러 발생";
 
@@ -300,7 +295,7 @@ router.post(
     }).single("upload"),
     (req, res) => {
       var id = req.body.groupId;
-      var image = path.join(__dirname, "..", "images/") + req.file.filename;
+      var image = "./images/" + req.file.filename;
       var resultCode = 404;
       var message = "에러 발생";
 
@@ -331,7 +326,7 @@ router.post(
 
     router.post("/reset/photo", (req, res) => {
       var id = req.query.groupId;
-      var image = path.join(__dirname, "..", "images/") + "group_profile_default.jpg";
+      var image = "./images/" + "group_profile_default.jpg";
       var resultCode = 404;
       var message = "에러 발생";
 
