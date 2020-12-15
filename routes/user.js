@@ -6,6 +6,10 @@ const mysql = require("mysql");
 const dbconfig = require("../config/database.js");
 const db = mysql.createConnection(dbconfig);
 
+const multer = require("multer");
+const multerconfig = require("../config/multer.js");
+storage = multer.diskStorage(multerconfig);
+
 router.get("/", (req, res) => {
   var id = req.query.userId;
   var token = req.query.token;
@@ -15,7 +19,7 @@ router.get("/", (req, res) => {
   var birth = "";
   var phone = "";
   var email = "";
-  var tokken = "";
+  var token = "";
   var gender;
   var resultCode = 404;
   var message = "에러 발생";
@@ -38,12 +42,12 @@ router.get("/", (req, res) => {
             name = result[0].name;
             group_id = result[0].group_id;
             image = result[0].image;
-            birth = result[0].birth;
+            var date = new Date(result[0].birth);
+            date.setHours(date.getHours()+9);
+            birth = date;
             phone = result[0].phone;
             email = result[0].email;
             gender = result[0].gender;
-            tokken = result[0].tokken;
-
             res.json({
               code: resultCode,
               message: message,
@@ -55,7 +59,7 @@ router.get("/", (req, res) => {
               phone,
               email,
               gender,
-              tokken
+              token
             });
           }
         });
@@ -73,6 +77,8 @@ router.post("/add", (req, res) => {
   var email = req.body.userEmail;
   var birth = req.body.userBirth;
   var gender = req.body.userGender;
+  var image =
+  "./images/" + "group_profile_default.jpg";
   var resultCode = 404;
   var message = "에러 발생";
 
@@ -86,8 +92,44 @@ router.post("/add", (req, res) => {
 
   async function insertData() {
     var sql =
-      "INSERT INTO User (id, name, phone, email, birth, gender) VALUES (?, ?, ?, ?, ?, ?)";
-    db.query(sql, [id, name, phone, email, birth, gender], (err, result) => {
+      "INSERT INTO User (id, name, phone, email, birth, image, gender) VALUES (?, ?, ?, ?, ?, ?, ?)";
+    db.query(sql, [id, name, phone, email, birth, image, gender], (err, result) => {
+      if (err) {
+        console.log(err);
+        admin.auth().deleteUser(id);
+      } else {
+        resultCode = 200;
+        message = "회원가입 성공";
+      }
+    });
+  }
+});
+
+router.post("/add/photo", multer({
+  storage: storage,
+}).single("upload"), (req, res) => {
+  var name = req.body.userName;
+  var id = req.body.userId;
+  var phone = "+82" + req.body.userPhone;
+  var email = req.body.userEmail;
+  var birth = req.body.userBirth;
+  var gender = req.body.userGender;
+  var image = "./images/" + req.file.filename;
+  var resultCode = 404;
+  var message = "에러 발생";
+
+  insertData().then(function () {
+    //  console.log(req.body);
+    res.json({
+      code: resultCode,
+      message: message,
+    });
+  });
+
+  async function insertData() {
+    var sql =
+      "INSERT INTO User (id, name, phone, email, birth, image, gender) VALUES (?, ?, ?, ?, ?, ?, ?)";
+    db.query(sql, [id, name, phone, email, birth, image, gender], (err, result) => {
       if (err) {
         console.log(err);
         admin.auth().deleteUser(id);
@@ -133,15 +175,23 @@ router.post("/update", (req, res) => {
   var id = req.body.id;
   var name = req.body.name;
   var phone = req.body.phone;
+  var image = "./images/" + "group_profile_default.jpg";
+  var checkDefault = req.body.checkDefault;
+  if (checkDefault == 0) {
+    var sqlUpdate =
+    "UPDATE homekippa.User SET name ='"+name+"', phone = '"+phone+"' WHERE id = '"+id+"' ;";
+  } else {
+    var sqlUpdate =
+    "UPDATE homekippa.User SET name ='"+name+"', phone = '"+phone+"', image = '"+image+"' WHERE id = '"+id+"' ;";
+  }
 
-  console.log(id, name, phone);
+  console.log(id, name, phone, checkDefault, sqlUpdate);
   var resultCode = 404;
   var message = "일과 수정 에러 발생";
 
   async function updateData() {
     console.log("왔나용가리?")
-    var sqlUpdate =
-      "UPDATE homekippa.User SET name ='"+name+"', phone = '"+phone+"' WHERE id = '"+id+"' ;";
+    
     db.query(
       sqlUpdate,
       (err, result) => {
@@ -163,6 +213,46 @@ router.post("/update", (req, res) => {
     });
   }
 });
+
+router.post("/update/photo", multer({
+  storage: storage,
+}).single("upload"), (req, res) => {
+
+  var id = req.body.id;
+  var name = req.body.name;
+  var phone = req.body.phone;
+  var image = "./images/" + req.file.filename;
+
+  console.log(id, name, phone);
+  var resultCode = 404;
+  var message = "일과 수정 에러 발생";
+
+  async function updateData() {
+    console.log("왔나용가리?")
+    var sqlUpdate =
+    "UPDATE homekippa.User SET name ='"+name+"', phone = '"+phone+"', image = '"+image+"' WHERE id = '"+id+"' ;";
+    db.query(
+      sqlUpdate,
+      (err, result) => {
+        if (err) {
+          console.log(err);
+        } else {
+          resultCode = 200;
+          message = "일과 수정 성공";
+          editUser();
+        }
+      }
+    );
+  }
+  updateData();
+  function editUser() {
+    res.json({
+      code: resultCode,
+      message: message,
+    });
+  }
+});
+
 router.get("/group", (req, res) => {
   var id = req.query.groupId;
   var resultCode = 404;

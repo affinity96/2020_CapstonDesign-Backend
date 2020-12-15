@@ -149,7 +149,7 @@ router.get("/home", (req, res) => {
     var sqlPost =
       "SELECT * FROM homekippa.Post WHERE `area` = '" +
       area +
-      "' AND `scope` !=2 ORDER BY `date` DESC";
+      "' AND `scope` =0 ORDER BY `date` DESC";
   }
   console.log(sqlPost);
   //Execute
@@ -303,6 +303,8 @@ router.post("/add", (req, res) => {
 
   var scope = req.body.scope;
 
+
+
   if(scope == "wholeScope"){
     scope = 0;
   }else if(scope == "followScope"){
@@ -310,6 +312,8 @@ router.post("/add", (req, res) => {
   }else if(scope == "closedScope"){
     scope = 2;
   }
+
+
 
   console.log("ㄸ호잉또잉", req.body);
   async function insertData() {
