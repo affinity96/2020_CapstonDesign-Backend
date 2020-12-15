@@ -193,7 +193,7 @@ router.get("/list/filter", (req, res) => {
 
   console.log(filter);
   async function queryData() {
-    var sqlSelect = "SELECT * FROM homekippa.User WHERE ((name LIKE ?) OR (phone LIKE ?) OR (email LIKE ?)) AND (group_id is NULL)";
+    var sqlSelect = "SELECT * FROM homekippa.User WHERE ((name LIKE ?) OR (phone LIKE ?) OR (email LIKE ?))";
     db.query(sqlSelect, [filter, filter, filter], (err, result) => {
       if (err) {
         console.log(err);
