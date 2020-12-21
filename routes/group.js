@@ -589,6 +589,7 @@ router.post("/add", (req, res) => {
       (err, result) => {
         if (err) {
           console.log(err);
+          send();
         } else {
           updateData(result.insertId);
         }
@@ -601,6 +602,7 @@ router.post("/add", (req, res) => {
     db.query(sqlUpdate, [groupId, id], (err, result) => {
       if (err) {
         console.log(err);
+        send();
       } else {
         resultCode = 200;
         message = "그룹생성 성공";

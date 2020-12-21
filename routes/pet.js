@@ -276,6 +276,7 @@ router.post("/add/des", (req, res) => {
       (err, result) => {
         if (err) {
           console.log(err);
+          addNewPet();
         } else {
           resultCode = 200;
           message = "펫생성 성공";
