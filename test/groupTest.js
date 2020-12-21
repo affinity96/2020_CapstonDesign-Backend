@@ -25,7 +25,7 @@ describe('유저 정보 불러오기 테스트 ->', function(){
                 .get("/pet/?groupId=" +group_id)
                 .end(function (err, res) {
                     if (err) return done(err);
-                    console.log(res.body);
+                    // console.log(res.body);
                     done();
                 });
         });

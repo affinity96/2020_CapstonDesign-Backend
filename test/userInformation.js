@@ -28,7 +28,7 @@ describe('유저 정보 불러오기 테스트 ->', function(){
             .get("/user/?userId=" +data)
             .end(function (err, res) {
                 if (err) return  done(err);
-                console.log(res.body);
+                // console.log(res.body);
                 name = res.body.name;
                 group_id = res.body.group_id;
                 email = res.body.email;
