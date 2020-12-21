@@ -80,7 +80,6 @@ router.get("/group", (req, res) => {
 });
 
 router.get("/home", (req, res) => {
-  console.log("momoling");
   var groupid = req.query.groupId;
   var tab = req.query.tab_;
   var area = req.query.area;

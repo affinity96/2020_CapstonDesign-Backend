@@ -23,7 +23,6 @@ router.get("/", (req, res) => {
       if (err) {
         console.log(err);
       } else {
-        console.log(result[0]);
         resultCode = 200;
         message = "그룹 정보 GET 성공";
 
