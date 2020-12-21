@@ -10,7 +10,10 @@ const multer = require("multer");
 const multerconfig = require("../config/multer.js");
 storage = multer.diskStorage(multerconfig);
 
+
+
 router.get("/", (req, res) => {
+
   var id = req.query.userId;
   var token = req.query.token;
   var name = "";
@@ -147,7 +150,7 @@ router.put("/delete", (req, res) => {
   var resultCode = 404;
   var message = "회원 탈퇴 에러 발생";
   deleteData().then(function () {
-   
+
     res.json({
       code: resultCode,
       message: message,
@@ -161,7 +164,7 @@ router.put("/delete", (req, res) => {
     db.query(sql,(err, result) => {
       if (err) {
         console.log(err);
-        
+
       } else {
         resultCode = 200;
         message = "회원 탈퇴 성공";
@@ -191,7 +194,7 @@ router.post("/update", (req, res) => {
 
   async function updateData() {
     console.log("왔나용가리?")
-    
+
     db.query(
       sqlUpdate,
       (err, result) => {
