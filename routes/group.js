@@ -23,28 +23,34 @@ router.get("/", (req, res) => {
       if (err) {
         console.log(err);
       } else {
-        resultCode = 200;
-        message = "그룹 정보 GET 성공";
+        if(result == ""){
+          res.json({
+            code: resultCode,
+            message: message,
+          })
+        }
+        else{
+          resultCode = 200;
+          message = "그룹 정보 GET 성공";
 
-        res.json({
-          code: resultCode,
-          message: message,
-          name: result[0].name,
-          id: result[0].id,
-          image: result[0].image,
-          address: result[0].address,
-          introduction: result[0].introduction,
-          cover: result[0].cover,
-          tag: result[0].tag,
-          area: result[0].area,
-        });
+          res.json({
+            code: resultCode,
+            message: message,
+            name: result[0].name,
+            id: result[0].id,
+            image: result[0].image,
+            address: result[0].address,
+            introduction: result[0].introduction,
+            cover: result[0].cover,
+            tag: result[0].tag,
+            area: result[0].area,
+          });
+        }
       }
     });
   }
 
-  queryData().then(function () {
-    console.log(id);
-  });
+  queryData();
 });
 
 router.get("/member", (req, res) => {
@@ -612,7 +618,6 @@ router.post("/add", (req, res) => {
   }
 
   function send() {
-    console.log(req.body);
     res.json({
       code: resultCode,
       message: message,

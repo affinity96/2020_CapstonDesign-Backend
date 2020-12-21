@@ -38,27 +38,28 @@ router.get("/", (req, res) => {
       if (err) {
         console.log(err);
       } else {
-        console.log("petBirth");
-        console.log(result);
-        if (result != "") { 
-          var date = new Date(result[0].birth);
-          date.setHours(date.getHours()+9);
-          result[0].birth = date;
-          console.log(result[0].birth);
+        if(result == ""){
+          res.json({
+            code: resultCode,
+            message: message,
+          })
         }
-        resultCode = 200;
-        message = "펫 정보 GET 성공";
-
+        else{
+          if (result != "") { 
+            var date = new Date(result[0].birth);
+            date.setHours(date.getHours()+9);
+            result[0].birth = date;
+          }
+          resultCode = 200;
+          message = "펫 정보 GET 성공";
+          res.json(result);
+        }
         
-
-        res.json(result);
       }
     });
   }
 
-  queryData().then(function () {
-    console.log(id);
-  });
+  queryData();
 });
 
 router.post("/add", (req, res) => {
@@ -232,8 +233,6 @@ router.post(
   insertData();
   function addNewPet()
   {
-    console.log(req.file);
-    console.log(req.body);
     res.json({
       code: resultCode,
       message: message,
@@ -242,7 +241,6 @@ router.post(
 });
 
 router.post("/add/des", (req, res) => {
-  console.log(req.body);
 
   var group_id = req.body.GroupId;
   var name = req.body.petName;
@@ -289,7 +287,6 @@ router.post("/add/des", (req, res) => {
   insertData();
   function addNewPet()
   {
-    console.log(req.body);
     res.json({
       code: resultCode,
       message: message,

@@ -43,31 +43,38 @@ router.get("/", (req, res) => {
               message: message,
             })
           } else {
-            console.log(result[0]);
-            resultCode = 200;
-            message = "유저정보 GET 성공";
-            name = result[0].name;
-            group_id = result[0].group_id;
-            image = result[0].image;
-            var date = new Date(result[0].birth);
-            date.setHours(date.getHours()+9);
-            birth = date;
-            phone = result[0].phone;
-            email = result[0].email;
-            gender = result[0].gender;
-            res.json({
-              code: resultCode,
-              message: message,
-              name,
-              id,
-              group_id,
-              image,
-              birth,
-              phone,
-              email,
-              gender,
-              token
-            });
+            if(result == ""){
+              res.json({
+                code: resultCode,
+                message: message,
+              })
+            }
+            else{
+              resultCode = 200;
+              message = "유저정보 GET 성공";
+              name = result[0].name;
+              group_id = result[0].group_id;
+              image = result[0].image;
+              var date = new Date(result[0].birth);
+              date.setHours(date.getHours()+9);
+              birth = date;
+              phone = result[0].phone;
+              email = result[0].email;
+              gender = result[0].gender;
+              res.json({
+                code: resultCode,
+                message: message,
+                name,
+                id,
+                group_id,
+                image,
+                birth,
+                phone,
+                email,
+                gender,
+                token
+              });
+            }          
           }
         });
       }
@@ -107,7 +114,6 @@ router.post("/add", (req, res) => {
     });
   }
   function done() {
-    //  console.log(req.body);
     res.json({
       code: resultCode,
       message: message,
@@ -155,13 +161,7 @@ router.put("/delete", (req, res) => {
   var userId = req.query.userId;
   var resultCode = 404;
   var message = "회원 탈퇴 에러 발생";
-  deleteData().then(function () {
-
-    res.json({
-      code: resultCode,
-      message: message,
-    });
-  });
+  deleteData();
 
   async function deleteData() {
     var sql =
@@ -170,10 +170,14 @@ router.put("/delete", (req, res) => {
       if (err) {
         console.log(err);
       } else {
-        console.log("여기들어오니?");
-        resultCode = 200;
-        message = "회원 탈퇴 성공";
-        done();
+        if(result.affectedRows == 0){
+          done();
+        }
+        else{
+          resultCode = 200;
+          message = "회원 탈퇴 성공";
+          done();
+        }
       }
     });
   }
