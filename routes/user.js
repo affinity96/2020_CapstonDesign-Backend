@@ -35,8 +35,12 @@ router.get("/", (req, res) => {
         db.query(sqlSelect, id, (err, result) => {
           if (err) {
             console.log(err);
+            res.json({
+              code: resultCode,
+              message: message,
+            })
           } else {
-            // console.log(result[0]);
+            console.log(result[0]);
             resultCode = 200;
             message = "유저정보 GET 성공";
             name = result[0].name;
@@ -82,13 +86,7 @@ router.post("/add", (req, res) => {
   var resultCode = 404;
   var message = "에러 발생";
 
-  insertData().then(function () {
-    //  console.log(req.body);
-    res.json({
-      code: resultCode,
-      message: message,
-    });
-  });
+  insertData();
 
   async function insertData() {
     var sql =
@@ -97,10 +95,19 @@ router.post("/add", (req, res) => {
       if (err) {
         console.log(err);
         admin.auth().deleteUser(id);
+        done();
       } else {
         resultCode = 200;
         message = "회원가입 성공";
+        done();
       }
+    });
+  }
+  function done() {
+    //  console.log(req.body);
+    res.json({
+      code: resultCode,
+      message: message,
     });
   }
 });
@@ -142,30 +149,31 @@ router.post("/add/photo", multer({
 });
 
 router.put("/delete", (req, res) => {
-  console.log("여기는...")
   var userId = req.query.userId;
   var resultCode = 404;
   var message = "회원 탈퇴 에러 발생";
-  deleteData().then(function () {
-   
-    res.json({
-      code: resultCode,
-      message: message,
-    });
-  });
+  deleteData();
 
   async function deleteData() {
     var sql =
       "DELETE FROM User WHERE id = '" + userId+"'";
-    console.log("온거맞냐")
     db.query(sql,(err, result) => {
       if (err) {
         console.log(err);
-        
+        done();     
       } else {
+        console.log("여기들어오니?");
         resultCode = 200;
         message = "회원 탈퇴 성공";
+        done();
       }
+    });
+  }
+  function done() {
+   
+    res.json({
+      code: resultCode,
+      message: message,
     });
   }
 });
