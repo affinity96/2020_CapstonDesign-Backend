@@ -1,6 +1,6 @@
-# HOMEKIPPA_BACKEND
+# HAPPYTOGEDOG : SNS기반 반려동물 종합 관리 플랫폼
 
-실행방법
+## 전체 시스템 구조도
 
 1. node js, npm 설치
 2. git clone
